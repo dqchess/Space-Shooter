@@ -31,9 +31,11 @@ public class Player : MonoBehaviour {
     private int rightRotationHash = Animator.StringToHash("Right rotation");
     private int idleHash = Animator.StringToHash("Idle");
 
+
+
     private float x;
     private float y;
-
+    public bool isCombatStarted = false;
 
     void Start() {
         aimAssistLine = gameObject.GetComponent<LineRenderer>();
@@ -42,9 +44,24 @@ public class Player : MonoBehaviour {
 
     void Update() {
 
-        Move();
-        Fire();
-        AimAssist();
+        if (!isCombatStarted) {
+            Debug.Log("Combat not started!");
+            if (transform.position.z >= 0) {
+                isCombatStarted = true;
+            }
+        } else {
+            Debug.Log("Combat started!");
+
+            Move();
+            Fire();
+            AimAssist();
+        }
+
+        if (!isCombatStarted) {
+            // Move the player ship to the stating position
+            transform.position = Vector3.MoveTowards(transform.position, new Vector3(0f, 0f, 0f), playerMovementSpeed * Time.deltaTime);
+        }
+
     }
 
     private void Fire() {
@@ -83,7 +100,7 @@ public class Player : MonoBehaviour {
             y = 0;
         }
 
-       // Debug.Log("\nX: " + x + "Y: " + y);
+        // Debug.Log("\nX: " + x + "Y: " + y);
 #else
         x = Input.GetAxis("Horizontal") * playerMovementSpeed * Time.deltaTime;
         y = Input.GetAxis("Vertical") * playerMovementSpeed * Time.deltaTime;
