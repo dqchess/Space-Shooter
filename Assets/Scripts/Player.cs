@@ -43,7 +43,7 @@ public class Player : MonoBehaviour {
     }
 
     void Update() {
-
+        // Fire and move only after the spaceship reaches it's position
         if (!isCombatStarted) {
             Debug.Log("Combat not started!");
             if (transform.position.z >= 0) {
