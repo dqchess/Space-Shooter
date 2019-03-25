@@ -35,6 +35,7 @@ public class Player : MonoBehaviour {
 
     private float x;
     private float y;
+    private bool aimAssistLineIsVisible = false;
     public bool isCombatStarted = false;
 
     void Start() {
@@ -54,7 +55,13 @@ public class Player : MonoBehaviour {
 
             Move();
             Fire();
-            AimAssist();
+
+            Debug.Log("aimAssistLineIsVisible: " + aimAssistLineIsVisible);
+            if (aimAssistLineIsVisible) {
+                AimAssist();
+            } else {
+                aimAssistLine.positionCount = 0; // Delete the line which was drawn previously.
+            }
         }
 
         if (!isCombatStarted) {
@@ -139,6 +146,11 @@ public class Player : MonoBehaviour {
             animator.Play(idleHash);
         }
     }
+
+    public void SetAimAssistLineIsVisible(bool isVisible) {
+        aimAssistLineIsVisible = isVisible;
+    }
+
 
     private void AimAssist() {
         Vector3 from = transform.position;
