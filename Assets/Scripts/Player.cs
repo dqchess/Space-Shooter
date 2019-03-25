@@ -114,19 +114,19 @@ public class Player : MonoBehaviour {
 #endif
 
         // Restrict player movement to viewport
-        if (currentPosition.x + x >= 37) {
+        if (currentPosition.x + x >= 29) {
             x = 0;
         }
 
-        if (currentPosition.x + x <= -37) {
+        if (currentPosition.x + x <= -29) {
             x = 0;
         }
 
-        if (currentPosition.y + y <= -12) {
+        if (currentPosition.y + y <= -9) {
             y = 0;
         }
 
-        if (currentPosition.y + y >= 25) {
+        if (currentPosition.y + y >= 29) {
             y = 0;
         }
 
