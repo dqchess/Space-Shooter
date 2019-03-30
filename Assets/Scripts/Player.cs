@@ -46,17 +46,17 @@ public class Player : MonoBehaviour {
     void Update() {
         // Fire and move only after the spaceship reaches it's position
         if (!isCombatStarted) {
-            Debug.Log("Combat not started!");
+            //Debug.Log("Combat not started!");
             if (transform.position.z >= 0) {
                 isCombatStarted = true;
             }
         } else {
-            Debug.Log("Combat started!");
+           // Debug.Log("Combat started!");
 
             Move();
             Fire();
 
-            Debug.Log("aimAssistLineIsVisible: " + aimAssistLineIsVisible);
+            //Debug.Log("aimAssistLineIsVisible: " + aimAssistLineIsVisible);
             if (aimAssistLineIsVisible) {
                 AimAssist();
             } else {
