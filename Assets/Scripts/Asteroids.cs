@@ -43,7 +43,7 @@ public class Asteroids : MonoBehaviour {
         }
 
         Vector3 position = new Vector3(x, Random.Range(yMin, yMax), zMax);
-        Debug.Log("X: " + position.x + " Y: " + position.y + " Z: " + position.z);
+        //Debug.Log("X: " + position.x + " Y: " + position.y + " Z: " + position.z);
         Instantiate(asteroids[asteroidIndex], position, Quaternion.identity);
     }
 }
