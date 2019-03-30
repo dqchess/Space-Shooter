@@ -8,8 +8,11 @@ public class Asteroids : MonoBehaviour {
     [SerializeField] GameObject[] asteroids;
 
     [Header("Asteroids Spawning Coordinate Values")]
-    [SerializeField] float xMin = -38.5f;
-    [SerializeField] float xMax = 38.5f;
+    [SerializeField] float x1Min = -45f;
+    [SerializeField] float x1Max = -30f;
+    [SerializeField] float x2Min = 29f;
+    [SerializeField] float x2Max = 45f;
+
     [SerializeField] float yMin = -16f;
     [SerializeField] float yMax = 25f;
     [SerializeField] float zMin = -50f;
@@ -19,7 +22,9 @@ public class Asteroids : MonoBehaviour {
     [SerializeField] float timeBetweenSpawn = 3.5f;
     private float currentSpawnTime = 0f;
 
-    // Update is called once per frame
+    // Cached References
+    private float x;
+
     void Update() {
         if (currentSpawnTime >= timeBetweenSpawn) {
             currentSpawnTime = 0;
@@ -30,7 +35,14 @@ public class Asteroids : MonoBehaviour {
 
     private void SpawnAsteroids() {
         int asteroidIndex = Random.Range(0, asteroids.Length);
-        Vector3 position = new Vector3(Random.Range(xMin, xMax), Random.Range(yMin, yMax), zMax);
+        
+        if (Random.Range(0, 100) % 2 == 0) {
+            x = Random.Range(x1Min, x1Max);
+        } else {
+            x = Random.Range(x2Min, x2Max);
+        }
+
+        Vector3 position = new Vector3(x, Random.Range(yMin, yMax), zMax);
         Debug.Log("X: " + position.x + " Y: " + position.y + " Z: " + position.z);
         Instantiate(asteroids[asteroidIndex], position, Quaternion.identity);
     }

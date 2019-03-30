@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour {
 
     // Configurations
     [Header("Firing Configurations")]
-    [Range(0f, 5f)] [SerializeField] float delayBetweenFiring = 0.1f;
+    [Range(0f, 5f)] [SerializeField] float delayBetweenFiring = 0.75f;
     [SerializeField] GameObject missilePrefab;
     [Range(1000f, 5000f)] [SerializeField] float projectileSpeed = 3000f;
 
