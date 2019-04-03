@@ -7,9 +7,18 @@ public class EnemySpawner : MonoBehaviour {
     [SerializeField] WaypointConfig waypointConfig;
     [Range(0, 10, order = 1)] [SerializeField] int numberOfEnemies = 4;
 
-    void Start() {
+    private Player player;
+    private bool spawningExecuted = false;
 
-           StartCoroutine(SpawnEnemies());
+    void Start() {
+        player = FindObjectOfType<Player>();
+    }
+
+    private void Update() {
+        if (player.IsPlayerReady() && !spawningExecuted) {
+            StartCoroutine(SpawnEnemies());
+            spawningExecuted = true;
+        }
     }
 
     IEnumerator SpawnEnemies() {

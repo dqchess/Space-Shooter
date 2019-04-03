@@ -36,7 +36,7 @@ public class Player : MonoBehaviour {
     private float x;
     private float y;
     private bool aimAssistLineIsVisible = false;
-    public bool isCombatStarted = false;
+    private bool isPlayerReady = false;
 
     void Start() {
         aimAssistLine = gameObject.GetComponent<LineRenderer>();
@@ -45,10 +45,10 @@ public class Player : MonoBehaviour {
 
     void Update() {
         // Fire and move only after the spaceship reaches it's position
-        if (!isCombatStarted) {
+        if (!isPlayerReady) {
             //Debug.Log("Combat not started!");
             if (transform.position.z >= 0) {
-                isCombatStarted = true;
+                isPlayerReady = true;
             }
         } else {
            // Debug.Log("Combat started!");
@@ -64,7 +64,7 @@ public class Player : MonoBehaviour {
             }
         }
 
-        if (!isCombatStarted) {
+        if (!isPlayerReady) {
             // Move the player ship to the stating position
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(0f, 0f, 0f), playerMovementSpeed * Time.deltaTime);
         }
@@ -168,5 +168,9 @@ public class Player : MonoBehaviour {
 
         aimAssistLine.positionCount = newPositions.Length;
         aimAssistLine.SetPositions(newPositions);
+    }
+
+    public bool IsPlayerReady() {
+        return isPlayerReady;
     }
 }
