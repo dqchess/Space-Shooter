@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour {
+public class EnemyOne : MonoBehaviour {
 
     // Configurations
     [Header("Firing Configurations")]
     [Range(0f, 5f)] [SerializeField] float delayBetweenFiring = 0.75f;
     [SerializeField] GameObject missilePrefab;
-    [Range(1000f, 5000f)] [SerializeField] float projectileSpeed = 3000f;
+    [Range(1, 200f)] [SerializeField] float projectileSpeed = 100f;
 
     [Header("Movement Configurations")]
     [SerializeField] float enemyMovementSpeed = 20f;
@@ -20,19 +20,12 @@ public class Enemy : MonoBehaviour {
     private WaypointConfig waypointConfig;
     private int enemyPosition = 0;
     private float distanceBetweenEnemies = 15f;
-    private Animator animator;
-
-    private int leftRotationHash = Animator.StringToHash("Left Rotation");
-    private int rightRoationHash = Animator.StringToHash("Right Rotation");
-    private int idleHash = Animator.StringToHash("Idle");
-
+    private bool canShoot = false;
 
     private void Start() {
-        animator = GetComponent<Animator>();
         waypoints = waypointConfig.GetWaypoints();
         transform.position = waypoints[waypointIndex].transform.position;
 
-        //animator.Play(idleHash);
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
     }
@@ -48,7 +41,23 @@ public class Enemy : MonoBehaviour {
     // Update is called once per frame
     void Update() {
         MoveEnemy();
+
+        if (canShoot) {
+            StartShooting();
+        }
     }
+
+  
+    private void StartShooting() {
+        if (currentFiringTime >= delayBetweenFiring) {
+            // Instantiate bullet
+            currentFiringTime = 0;
+            GameObject missile = Instantiate(missilePrefab, transform.position, Quaternion.identity);
+            missile.GetComponent<Rigidbody>().velocity = new Vector3(0f, 0f, missile.transform.forward.z * -1) * projectileSpeed;
+        }
+        currentFiringTime += Time.deltaTime;
+    }
+    
 
     public void MoveEnemy() {
         if (waypointIndex <= waypoints.Count - 1) {
@@ -77,6 +86,8 @@ public class Enemy : MonoBehaviour {
             if (waypointIndex > 3) {
                 transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, 180f, 0f), Time.deltaTime * rotationSpeed);
             }
+        } else {
+            canShoot = true;
         }
     }
 }

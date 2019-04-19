@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   delayBetweenFiring: 0.75
   missilePrefab: {fileID: 161724, guid: fec710d6f8ab81c4c9edff6545732936, type: 3}
-  projectileSpeed: 3000
+  projectileSpeed: 100
   enemyMovementSpeed: 20
 --- !u!114 &1506068303597504377
 MonoBehaviour:

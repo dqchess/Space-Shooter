@@ -25,8 +25,8 @@ public class EnemySpawner : MonoBehaviour {
 
         for (int enemyCount = 0; enemyCount < numberOfEnemies; enemyCount++) {
             var enemy = Instantiate(waypointConfig.GetEnemyPrefab(), waypointConfig.GetWaypoints()[0].transform.position, Quaternion.identity);
-            enemy.GetComponent<Enemy>().SetWaypointConfig(waypointConfig);
-            enemy.GetComponent<Enemy>().SetEnemyPosition(enemyCount);
+            enemy.GetComponent<EnemyOne>().SetWaypointConfig(waypointConfig);
+            enemy.GetComponent<EnemyOne>().SetEnemyPosition(enemyCount);
             yield return new WaitForSeconds(waypointConfig.GetTimeBetweenSpawns());
         }
 
