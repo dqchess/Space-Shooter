@@ -12,11 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b4948ab61d684f439e6d95df8b4da98, type: 3}
   m_Name: EnemyWaypoints
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8666906266787702265, guid: 2948e3c5f3464934eb8edb13aa6dcad8,
+  enemyPrefab: {fileID: 4025650856292334029, guid: 62f7bec65a9bea44abff6be6b7967f57,
     type: 3}
   pathPrefab: {fileID: 904816933873445585, guid: 09f0cabaf929084438f3d54d2a5c604c,
     type: 3}
   timeBetweenSpawns: 0.8
-  spawnRandomFactor: 0
   numberOfEnemy: 4
   moveSpeed: 20

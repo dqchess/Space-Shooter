@@ -20,10 +20,21 @@ public class Enemy : MonoBehaviour {
     private WaypointConfig waypointConfig;
     private int enemyPosition = 0;
     private float distanceBetweenEnemies = 15f;
+    private Animator animator;
+
+    private int leftRotationHash = Animator.StringToHash("Left Rotation");
+    private int rightRoationHash = Animator.StringToHash("Right Rotation");
+    private int idleHash = Animator.StringToHash("Idle");
+
 
     private void Start() {
+        animator = GetComponent<Animator>();
         waypoints = waypointConfig.GetWaypoints();
         transform.position = waypoints[waypointIndex].transform.position;
+
+        //animator.Play(idleHash);
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
     }
 
     public void SetEnemyPosition(int position) {
@@ -42,6 +53,7 @@ public class Enemy : MonoBehaviour {
     public void MoveEnemy() {
         if (waypointIndex <= waypoints.Count - 1) {
 
+
             var movementThisFrame = waypointConfig.GetMoveSpeed() * Time.deltaTime;
 
             // Target positions where the enemy has to move
@@ -55,6 +67,15 @@ public class Enemy : MonoBehaviour {
 
             if (Vector3.Distance(transform.position, targetPosition) <= 0.05f) {
                 waypointIndex++;
+            }
+            float rotationSpeed = 3f;
+            // Rotaton part
+            if (waypointIndex == 3) {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, 150f, -30f), Time.deltaTime * rotationSpeed);
+            }
+
+            if (waypointIndex > 3) {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.Euler(0f, 180f, 0f), Time.deltaTime * rotationSpeed);
             }
         }
     }
