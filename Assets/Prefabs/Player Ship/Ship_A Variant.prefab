@@ -1,34 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!320 &1118927195
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7518210139201740119}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: ababf7dba7fefd440a2b864805f31603, type: 2}
-  m_InitialState: 1
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: 114253428388396460, guid: ababf7dba7fefd440a2b864805f31603, type: 2}
-    value: {fileID: 0}
-  m_ExposedReferences:
-    m_References:
-    - f46f3f392ce32744c8d6cb3fac7c8957: {fileID: 0}
-    - 3d348fc5d06e4d3488436cc13954ff02: {fileID: 0}
-    - 137a7f6305512714ab52c629dda3edb7: {fileID: 0}
-    - d43ca85921909a544a81c7f07fc6896b: {fileID: 0}
-    - 15ef563a1f2511147b3f6d3819ff9907: {fileID: 0}
-    - 465f7fb6560f6bc469972fcc03d367a2: {fileID: 0}
-    - 0975fcd7e5503694a85b14436d31a95c: {fileID: 0}
-    - 110ff4bb02fd8fd4aa66624ffa526c92: {fileID: 0}
-    - c7ce374fe4b2ffc4da0bf16789bf935b: {fileID: 0}
-    - 75bc7dbd9206e0b478995b11121c58c3: {fileID: 0}
 --- !u!1001 &7518210139201854071
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -38,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 116512, guid: c6d050076565c634698b19ef0af575f7, type: 3}
       propertyPath: m_Name
-      value: Space Ship
+      value: Ship_A Variant
       objectReference: {fileID: 0}
     - target: {fileID: 479534, guid: c6d050076565c634698b19ef0af575f7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -86,18 +57,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1579607993763895789, guid: c6d050076565c634698b19ef0af575f7,
         type: 3}
-      propertyPath: playerMovementSpeed
-      value: 28
+      propertyPath: powerUpDelayBetweenFiring
+      value: 0.4
       objectReference: {fileID: 0}
-    - target: {fileID: 9544018, guid: c6d050076565c634698b19ef0af575f7, type: 3}
-      propertyPath: m_Controller
+    - target: {fileID: 3374462448300495349, guid: c6d050076565c634698b19ef0af575f7,
+        type: 3}
+      propertyPath: m_audioClip
       value: 
-      objectReference: {fileID: 9100000, guid: edd5fc8f7025eff4cab5e93e2de2a1f1, type: 2}
+      objectReference: {fileID: 8300000, guid: 0deef0211d7744f718d9dd44cca65045, type: 3}
+    - target: {fileID: 3374462448300495349, guid: c6d050076565c634698b19ef0af575f7,
+        type: 3}
+      propertyPath: Priority
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6d050076565c634698b19ef0af575f7, type: 3}
---- !u!1 &7518210139201740119 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 116512, guid: c6d050076565c634698b19ef0af575f7,
-    type: 3}
-  m_PrefabInstance: {fileID: 7518210139201854071}
-  m_PrefabAsset: {fileID: 0}

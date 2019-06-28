@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Enemy Path Config")]
@@ -9,6 +8,7 @@ public class WaypointConfig : ScriptableObject {
     [SerializeField] float timeBetweenSpawns = 0.5f;
     [SerializeField] int numberOfEnemy = 4;
     [SerializeField] float moveSpeed = 20f;
+    [SerializeField] float timeDelayAfterSpawn = 1f;
 
     public GameObject GetEnemyPrefab() {
         return enemyPrefab;
@@ -32,5 +32,9 @@ public class WaypointConfig : ScriptableObject {
 
     public float GetMoveSpeed() {
         return moveSpeed;
+    }
+
+    public float GetTimeDelayAfterSpawn() {
+        return timeDelayAfterSpawn;
     }
 }
