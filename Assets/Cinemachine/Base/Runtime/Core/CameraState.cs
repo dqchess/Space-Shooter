@@ -1,9 +1,8 @@
-using UnityEngine;
 using Cinemachine.Utility;
 using System.Collections.Generic;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// The output of the Cinemachine engine for a specific virtual camera.  The information
     /// in this struct can be blended, and provides what is needed to calculate an
@@ -17,8 +16,7 @@ namespace Cinemachine
     /// The Final position and orientation is the comination of the raw values and
     /// their corrections.
     /// </summary>
-    public struct CameraState
-    {
+    public struct CameraState {
         /// <summary>
         /// Camera Lens Settings.
         /// </summary>
@@ -99,10 +97,8 @@ namespace Cinemachine
         /// <summary>
         /// Orientation with correction and dutch applied.  This is what the final camera gets.
         /// </summary>
-        public Quaternion FinalOrientation
-        {
-            get
-            {
+        public Quaternion FinalOrientation {
+            get {
                 if (Mathf.Abs(Lens.Dutch) > UnityVectorExtensions.Epsilon)
                     return CorrectedOrientation * Quaternion.AngleAxis(Lens.Dutch, Vector3.forward);
                 return CorrectedOrientation;
@@ -112,10 +108,8 @@ namespace Cinemachine
         /// <summary>
         /// State with default values
         /// </summary>
-        public static CameraState Default
-        {
-            get
-            {
+        public static CameraState Default {
+            get {
                 CameraState state = new CameraState();
                 state.Lens = LensSettings.Default;
                 state.ReferenceUp = Vector3.up;
@@ -132,18 +126,16 @@ namespace Cinemachine
 
         /// <summary>Opaque structure represent extra blendable stuff and its weight.
         /// The base system ignores this data - it is intended for extension modules</summary>
-        public struct CustomBlendable 
-        { 
+        public struct CustomBlendable {
             /// <summary>The custom stuff that the extention module will consider</summary>
-            public Object m_Custom; 
+            public Object m_Custom;
             /// <summary>The weight of the custom stuff.  Must be 0...1</summary>
-            public float m_Weight; 
+            public float m_Weight;
 
             /// <summary>Constructor with specific values</summary>
             /// <param name="custom">The custom stuff that the extention module will consider</param>
             /// <param name="weight">The weight of the custom stuff.  Must be 0...1</param>
-            public CustomBlendable(Object custom, float weight) 
-                { m_Custom = custom; m_Weight = weight; }
+            public CustomBlendable(Object custom, float weight) { m_Custom = custom; m_Weight = weight; }
         };
 
         // This is to avoid excessive GC allocs
@@ -163,26 +155,22 @@ namespace Cinemachine
         /// extension modules</summary>
         /// <param name="index">Which one to get.  Must be in range [0...NumCustomBlendables)</param>
         /// <returns>The custom blendable at the specified index.</returns>
-        public CustomBlendable GetCustomBlendable(int index)
-        {
-            switch (index)
-            {
+        public CustomBlendable GetCustomBlendable(int index) {
+            switch (index) {
                 case 0: return mCustom0;
                 case 1: return mCustom1;
                 case 2: return mCustom2;
                 case 3: return mCustom3;
-                default: 
-                {
-                    index -= 4;
-                    if (m_CustomOverflow != null && index < m_CustomOverflow.Count)
-                        return m_CustomOverflow[index];
-                    return new CustomBlendable(null, 0);
-                }
+                default: {
+                        index -= 4;
+                        if (m_CustomOverflow != null && index < m_CustomOverflow.Count)
+                            return m_CustomOverflow[index];
+                        return new CustomBlendable(null, 0);
+                    }
             }
         }
 
-        int FindCustomBlendable(Object custom)
-        {
+        int FindCustomBlendable(Object custom) {
             if (mCustom0.m_Custom == custom)
                 return 0;
             if (mCustom1.m_Custom == custom)
@@ -191,8 +179,7 @@ namespace Cinemachine
                 return 2;
             if (mCustom3.m_Custom == custom)
                 return 3;
-            if (m_CustomOverflow != null)
-            {
+            if (m_CustomOverflow != null) {
                 for (int i = 0; i < m_CustomOverflow.Count; ++i)
                     if (m_CustomOverflow[i].m_Custom == custom)
                         return i + 4;
@@ -205,40 +192,35 @@ namespace Cinemachine
         /// extension modules</summary>
         /// <param name="b">The custom blendable to add.  If b.m_Custom is the same as an 
         /// already-added custom blendable, then they will be merged and the weights combined.</param>
-        public void AddCustomBlendable(CustomBlendable b)
-        {
+        public void AddCustomBlendable(CustomBlendable b) {
             // Attempt to merge common blendables to avoid growth
             int index = FindCustomBlendable(b.m_Custom);
             if (index >= 0)
                 b.m_Weight += GetCustomBlendable(index).m_Weight;
-            else
-            {
+            else {
                 index = NumCustomBlendables;
                 NumCustomBlendables = index + 1;
             }
-            switch (index)
-            {
+            switch (index) {
                 case 0: mCustom0 = b; break;
                 case 1: mCustom1 = b; break;
                 case 2: mCustom2 = b; break;
                 case 3: mCustom3 = b; break;
-                default: 
-                {
-                    if (m_CustomOverflow == null)
-                        m_CustomOverflow = new List<CustomBlendable>();
-                    m_CustomOverflow.Add(b);
-                    break;
-                }
+                default: {
+                        if (m_CustomOverflow == null)
+                            m_CustomOverflow = new List<CustomBlendable>();
+                        m_CustomOverflow.Add(b);
+                        break;
+                    }
             }
-         }
+        }
 
         /// <summary>Intelligently blend the contents of two states.</summary>
         /// <param name="stateA">The first state, corresponding to t=0</param>
         /// <param name="stateB">The second state, corresponding to t=1</param>
         /// <param name="t">How much to interpolate.  Internally clamped to 0..1</param>
         /// <returns>Linearly interpolated CameraState</returns>
-        public static CameraState Lerp(CameraState stateA, CameraState stateB, float t)
-        {
+        public static CameraState Lerp(CameraState stateA, CameraState stateB, float t) {
             t = Mathf.Clamp01(t);
             float adjustedT = t;
 
@@ -257,13 +239,11 @@ namespace Cinemachine
             Vector3 dirTarget = Vector3.zero;
             if (!stateA.HasLookAt || !stateB.HasLookAt)
                 state.ReferenceLookAt = kNoPoint;   // can't interpolate if undefined
-            else
-            {
+            else {
                 // Re-interpolate FOV to preserve target composition, if possible
                 float fovA = stateA.Lens.FieldOfView;
                 float fovB = stateB.Lens.FieldOfView;
-                if (!state.Lens.Orthographic && !Mathf.Approximately(fovA, fovB))
-                {
+                if (!state.Lens.Orthographic && !Mathf.Approximately(fovA, fovB)) {
                     LensSettings lens = state.Lens;
                     lens.FieldOfView = state.InterpolateFOV(
                             fovA, fovB,
@@ -278,7 +258,7 @@ namespace Cinemachine
                 // Linear interpolation of lookAt target point
                 state.ReferenceLookAt = Vector3.Lerp(
                         stateA.ReferenceLookAt, stateB.ReferenceLookAt, adjustedT);
-                
+
                 // If orientations are different, use LookAt to blend them
                 float angle = Quaternion.Angle(stateA.RawOrientation, stateB.RawOrientation);
                 if (angle > UnityVectorExtensions.Epsilon)
@@ -286,25 +266,19 @@ namespace Cinemachine
             }
 
             // Clever orientation interpolation
-            if (dirTarget.AlmostZero())
-            {
+            if (dirTarget.AlmostZero()) {
                 // Don't know what we're looking at - can only slerp
                 state.RawOrientation = UnityQuaternionExtensions.SlerpWithReferenceUp(
                         stateA.RawOrientation, stateB.RawOrientation, t, state.ReferenceUp);
-            }
-            else
-            {
+            } else {
                 // Rotate while preserving our lookAt target
                 dirTarget = dirTarget.normalized;
                 if ((dirTarget - state.ReferenceUp).AlmostZero()
-                    || (dirTarget + state.ReferenceUp).AlmostZero())
-                {
+                    || (dirTarget + state.ReferenceUp).AlmostZero()) {
                     // Looking up or down at the pole
                     state.RawOrientation = UnityQuaternionExtensions.SlerpWithReferenceUp(
                             stateA.RawOrientation, stateB.RawOrientation, t, state.ReferenceUp);
-                }
-                else
-                {
+                } else {
                     // Put the target in the center
                     state.RawOrientation = Quaternion.LookRotation(dirTarget, state.ReferenceUp);
 
@@ -319,15 +293,13 @@ namespace Cinemachine
             }
 
             // Accumulate the custom blendables and apply the weights
-            for (int i = 0; i < stateA.NumCustomBlendables; ++i)
-            {
+            for (int i = 0; i < stateA.NumCustomBlendables; ++i) {
                 CustomBlendable b = stateA.GetCustomBlendable(i);
-                b.m_Weight *= (1-t);
+                b.m_Weight *= (1 - t);
                 if (b.m_Weight > UnityVectorExtensions.Epsilon)
                     state.AddCustomBlendable(b);
             }
-            for (int i = 0; i < stateB.NumCustomBlendables; ++i)
-            {
+            for (int i = 0; i < stateB.NumCustomBlendables; ++i) {
                 CustomBlendable b = stateB.GetCustomBlendable(i);
                 b.m_Weight *= t;
                 if (b.m_Weight > UnityVectorExtensions.Epsilon)
@@ -336,8 +308,7 @@ namespace Cinemachine
             return state;
         }
 
-        float InterpolateFOV(float fovA, float fovB, float dA, float dB, float t)
-        {
+        float InterpolateFOV(float fovA, float fovB, float dA, float dB, float t) {
             // We interpolate shot height
             float hA = dA * 2f * Mathf.Tan(fovA * Mathf.Deg2Rad / 2f);
             float hB = dB * 2f * Mathf.Tan(fovB * Mathf.Deg2Rad / 2f);

@@ -1,19 +1,15 @@
-using UnityEngine;
 using UnityEditor;
-using System;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     /// <summary>
     /// Helper for drawing embedded asset editors
     /// </summary>
-    public class EmbeddeAssetEditor<T> where T : ScriptableObject
-    {
+    public class EmbeddeAssetEditor<T> where T : ScriptableObject {
         /// <summary>
         /// Create in OnEnable()
         /// </summary>
-        public EmbeddeAssetEditor(string propertyName, UnityEditor.Editor owner)
-        {
+        public EmbeddeAssetEditor(string propertyName, UnityEditor.Editor owner) {
             m_PropertyName = propertyName;
             m_Owner = owner;
             m_DoVersionControlChecks = UnityEditor.VersionControl.Provider.isActive;
@@ -37,8 +33,7 @@ namespace Cinemachine.Editor
         /// <summary>
         /// Free the resources in OnDisable()
         /// </summary>
-        public void OnDisable()
-        {
+        public void OnDisable() {
             DestroyEditor();
             m_Owner = null;
         }
@@ -61,27 +56,23 @@ namespace Cinemachine.Editor
         /// </summary>
         public void DrawEditorCombo(
             string title, string defaultName, string extension, string message,
-            string showLabel, bool indent)
-        {
+            string showLabel, bool indent) {
             SerializedProperty property = m_Owner.serializedObject.FindProperty(m_PropertyName);
             if (m_Editor == null)
                 UpdateEditor();
             if (m_Editor == null)
                 AssetFieldWithCreateButton(property, title, defaultName, extension, message);
-            else
-            {
+            else {
                 EditorGUILayout.BeginVertical(GUI.skin.box);
                 Rect rect = EditorGUILayout.GetControlRect(true);
                 rect.height = EditorGUIUtility.singleLineHeight;
                 EditorGUI.BeginChangeCheck();
                 EditorGUI.PropertyField(rect, property);
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     m_Owner.serializedObject.ApplyModifiedProperties();
                     UpdateEditor();
                 }
-                if (m_Editor != null)
-                {
+                if (m_Editor != null) {
                     Rect foldoutRect = new Rect(
                         rect.x - kIndentOffset, rect.y, rect.width + kIndentOffset, rect.height);
                     property.isExpanded = EditorGUI.Foldout(
@@ -97,11 +88,10 @@ namespace Cinemachine.Editor
                     });
 
                     GUI.enabled = !isLockedFile;
-                    if (property.isExpanded)
-                    {
+                    if (property.isExpanded) {
                         EditorGUILayout.Separator();
                         EditorGUILayout.HelpBox(
-                            "This is a shared asset.  Changes made here will apply to all users of this asset.", 
+                            "This is a shared asset.  Changes made here will apply to all users of this asset.",
                             MessageType.Info);
                         EditorGUI.BeginChangeCheck();
                         if (indent)
@@ -113,8 +103,7 @@ namespace Cinemachine.Editor
                             OnChanged(property.objectReferenceValue as T);
                     }
                     GUI.enabled = true;
-                    if (isLockedFile && GUILayout.Button("Check out"))
-                    {
+                    if (isLockedFile && GUILayout.Button("Check out")) {
                         UnityEditor.VersionControl.Provider.Checkout(
                             targetAsset, UnityEditor.VersionControl.CheckoutMode.Both);
                     }
@@ -125,8 +114,7 @@ namespace Cinemachine.Editor
 
         private void AssetFieldWithCreateButton(
             SerializedProperty property,
-            string title, string defaultName, string extension, string message)
-        {
+            string title, string defaultName, string extension, string message) {
             EditorGUI.BeginChangeCheck();
 
             float hSpace = 5;
@@ -135,39 +123,32 @@ namespace Cinemachine.Editor
             r.width -= buttonWidth + hSpace;
             EditorGUI.PropertyField(r, property);
             r.x += r.width + hSpace; r.width = buttonWidth;
-            if (GUI.Button(r, m_CreateButtonGUIContent))
-            {
+            if (GUI.Button(r, m_CreateButtonGUIContent)) {
                 string newAssetPath = EditorUtility.SaveFilePanelInProject(
                         title, defaultName, extension, message);
-                if (!string.IsNullOrEmpty(newAssetPath))
-                {
+                if (!string.IsNullOrEmpty(newAssetPath)) {
                     T asset = ScriptableObjectUtility.CreateAt<T>(newAssetPath);
                     property.objectReferenceValue = asset;
                     m_Owner.serializedObject.ApplyModifiedProperties();
                 }
             }
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 m_Owner.serializedObject.ApplyModifiedProperties();
                 UpdateEditor();
             }
         }
 
-        public void DestroyEditor()
-        {
-            if (m_Editor != null)
-            {
+        public void DestroyEditor() {
+            if (m_Editor != null) {
                 UnityEngine.Object.DestroyImmediate(m_Editor);
                 m_Editor = null;
             }
         }
 
-        public void UpdateEditor()
-        {
+        public void UpdateEditor() {
             DestroyEditor();
             SerializedProperty property = m_Owner.serializedObject.FindProperty(m_PropertyName);
-            if (property.objectReferenceValue != null)
-            {
+            if (property.objectReferenceValue != null) {
                 m_Editor = UnityEditor.Editor.CreateEditor(property.objectReferenceValue);
                 if (OnCreateEditor != null)
                     OnCreateEditor(m_Editor);

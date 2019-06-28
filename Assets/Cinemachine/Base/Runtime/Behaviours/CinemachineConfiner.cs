@@ -1,10 +1,9 @@
-using UnityEngine;
-using System.Collections.Generic;
 using Cinemachine.Utility;
 using System;
+using System.Collections.Generic;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// An add-on module for Cinemachine Virtual Camera that post-processes
     /// the final position of the virtual camera. It will confine the virtual
@@ -14,13 +13,11 @@ namespace Cinemachine
     [ExecuteInEditMode]
     [AddComponentMenu("")] // Hide in menu
     [SaveDuringPlay]
-    public class CinemachineConfiner : CinemachineExtension
-    {
+    public class CinemachineConfiner : CinemachineExtension {
         /// <summary>The confiner can operate using a 2D bounding shape or a 3D bounding volume</summary>
-        public enum Mode 
-        { 
-            Confine2D, 
-            Confine3D 
+        public enum Mode {
+            Confine2D,
+            Confine3D
         };
         /// <summary>The confiner can operate using a 2D bounding shape or a 3D bounding volume</summary>
         [Tooltip("The confiner can operate using a 2D bounding shape or a 3D bounding volume")]
@@ -29,7 +26,7 @@ namespace Cinemachine
         /// <summary>The volume within which the camera is to be contained.</summary>
         [Tooltip("The volume within which the camera is to be contained")]
         public Collider m_BoundingVolume;
-        
+
         /// <summary>The 2D shape within which the camera is to be contained.</summary>
         [Tooltip("The 2D shape within which the camera is to be contained")]
         public Collider2D m_BoundingShape2D;
@@ -47,27 +44,22 @@ namespace Cinemachine
         /// <param name="vcam">The virtual camera in question.  This might be different from the
         /// virtual camera that owns the confiner, in the event that the camera has children</param>
         /// <returns>True if the virtual camera has been repositioned</returns>
-        public bool CameraWasDisplaced(CinemachineVirtualCameraBase vcam)
-        {
+        public bool CameraWasDisplaced(CinemachineVirtualCameraBase vcam) {
             return GetExtraState<VcamExtraState>(vcam).confinerDisplacement > 0;
         }
-        
-        private void OnValidate()
-        {
+
+        private void OnValidate() {
             m_Damping = Mathf.Max(0, m_Damping);
         }
 
-        class VcamExtraState
-        {
+        class VcamExtraState {
             public Vector3 m_previousDisplacement;
             public float confinerDisplacement;
         };
-        
+
         /// <summary>Check if the bounding volume is defined</summary>
-        public bool IsValid 
-        {  
-            get
-            {
+        public bool IsValid {
+            get {
                 return ((m_ConfineMode == Mode.Confine3D && m_BoundingVolume != null)
                     || (m_ConfineMode == Mode.Confine2D && m_BoundingShape2D != null));
             }
@@ -76,13 +68,10 @@ namespace Cinemachine
         /// <summary>Callback to to the camera confining</summary>
         protected override void PostPipelineStageCallback(
             CinemachineVirtualCameraBase vcam,
-            CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
-        {
-            if (IsValid)
-            {
+            CinemachineCore.Stage stage, ref CameraState state, float deltaTime) {
+            if (IsValid) {
                 // Move the body before the Aim is calculated
-                if (stage == CinemachineCore.Stage.Body)
-                {
+                if (stage == CinemachineCore.Stage.Body) {
                     Vector3 displacement;
                     if (m_ConfineScreenEdges && state.Lens.Orthographic)
                         displacement = ConfineScreenEdges(vcam, ref state);
@@ -90,8 +79,7 @@ namespace Cinemachine
                         displacement = ConfinePoint(state.CorrectedPosition);
 
                     VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
-                    if (m_Damping > 0 && deltaTime >= 0)
-                    {
+                    if (m_Damping > 0 && deltaTime >= 0) {
                         Vector3 delta = displacement - extra.m_previousDisplacement;
                         delta = Damper.Damp(delta, m_Damping, deltaTime);
                         displacement = extra.m_previousDisplacement + delta;
@@ -104,21 +92,17 @@ namespace Cinemachine
         }
 
         private List<List<Vector2>> m_pathCache;
-       
+
         /// <summary>Call this if the bounding shape's points change at runtime</summary>
         public void InvalidatePathCache() { m_pathCache = null; }
 
-        bool ValidatePathCache()
-        {
-            Type colliderType = m_BoundingShape2D == null ? null:  m_BoundingShape2D.GetType();
-            if (colliderType == typeof(PolygonCollider2D))
-            {
+        bool ValidatePathCache() {
+            Type colliderType = m_BoundingShape2D == null ? null : m_BoundingShape2D.GetType();
+            if (colliderType == typeof(PolygonCollider2D)) {
                 PolygonCollider2D poly = m_BoundingShape2D as PolygonCollider2D;
-                if (m_pathCache == null || m_pathCache.Count != poly.pathCount)
-                {
+                if (m_pathCache == null || m_pathCache.Count != poly.pathCount) {
                     m_pathCache = new List<List<Vector2>>();
-                    for (int i = 0; i < poly.pathCount; ++i)
-                    {
+                    for (int i = 0; i < poly.pathCount; ++i) {
                         Vector2[] path = poly.GetPath(i);
                         List<Vector2> dst = new List<Vector2>();
                         for (int j = 0; j < path.Length; ++j)
@@ -127,16 +111,12 @@ namespace Cinemachine
                     }
                 }
                 return true;
-            }
-            else if (colliderType == typeof(CompositeCollider2D))
-            {
+            } else if (colliderType == typeof(CompositeCollider2D)) {
                 CompositeCollider2D poly = m_BoundingShape2D as CompositeCollider2D;
-                if (m_pathCache == null || m_pathCache.Count != poly.pathCount)
-                {
+                if (m_pathCache == null || m_pathCache.Count != poly.pathCount) {
                     m_pathCache = new List<List<Vector2>>();
                     Vector2[] path = new Vector2[poly.pointCount];
-                    for (int i = 0; i < poly.pathCount; ++i)
-                    {
+                    for (int i = 0; i < poly.pathCount; ++i) {
                         int numPoints = poly.GetPath(i, path);
                         List<Vector2> dst = new List<Vector2>();
                         for (int j = 0; j < numPoints; ++j)
@@ -150,8 +130,7 @@ namespace Cinemachine
             return false;
         }
 
-        private Vector3 ConfinePoint(Vector3 camPos)
-        {
+        private Vector3 ConfinePoint(Vector3 camPos) {
             // 3D version
             if (m_ConfineMode == Mode.Confine3D)
                 return m_BoundingVolume.ClosestPoint(camPos) - camPos;
@@ -167,19 +146,15 @@ namespace Cinemachine
             Vector2 p = camPos;
             Vector2 closest = p;
             float bestDistance = float.MaxValue;
-            for (int i = 0; i < m_pathCache.Count; ++i)
-            {
+            for (int i = 0; i < m_pathCache.Count; ++i) {
                 int numPoints = m_pathCache[i].Count;
-                if (numPoints > 0)
-                {
-                    Vector2 v0 = m_BoundingShape2D.transform.TransformPoint(m_pathCache[i][numPoints-1]);
-                    for (int j = 0; j < numPoints; ++j)
-                    {
+                if (numPoints > 0) {
+                    Vector2 v0 = m_BoundingShape2D.transform.TransformPoint(m_pathCache[i][numPoints - 1]);
+                    for (int j = 0; j < numPoints; ++j) {
                         Vector2 v = m_BoundingShape2D.transform.TransformPoint(m_pathCache[i][j]);
                         Vector2 c = Vector2.Lerp(v0, v, p.ClosestPointOnSegment(v0, v));
                         float d = Vector2.SqrMagnitude(p - c);
-                        if (d < bestDistance)
-                        {
+                        if (d < bestDistance) {
                             bestDistance = d;
                             closest = c;
                         }
@@ -191,8 +166,7 @@ namespace Cinemachine
         }
 
         // Camera must be orthographic
-        private Vector3 ConfineScreenEdges(CinemachineVirtualCameraBase vcam, ref CameraState state)
-        {
+        private Vector3 ConfineScreenEdges(CinemachineVirtualCameraBase vcam, ref CameraState state) {
             Quaternion rot = Quaternion.Inverse(state.CorrectedOrientation);
             float dy = state.Lens.OrthographicSize;
             float dx = dy * state.Lens.Aspect;
@@ -202,8 +176,7 @@ namespace Cinemachine
             Vector3 displacement = Vector3.zero;
             Vector3 camPos = state.CorrectedPosition;
             const int kMaxIter = 12;
-            for (int i = 0; i < kMaxIter; ++i)
-            {
+            for (int i = 0; i < kMaxIter; ++i) {
                 Vector3 d = ConfinePoint((camPos - vy) - vx);
                 if (d.AlmostZero())
                     d = ConfinePoint((camPos - vy) + vx);

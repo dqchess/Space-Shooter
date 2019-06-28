@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ExplosionsScaleCurves : MonoBehaviour
-{
+public class ExplosionsScaleCurves : MonoBehaviour {
     public AnimationCurve ScaleCurveX = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public AnimationCurve ScaleCurveY = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public AnimationCurve ScaleCurveZ = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -12,21 +10,18 @@ public class ExplosionsScaleCurves : MonoBehaviour
     private Transform t;
     float evalX, evalY, evalZ;
 
-    private void Awake()
-    {
+    private void Awake() {
         t = transform;
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         startTime = Time.time;
         evalX = 0;
-        evalY = 0; 
+        evalY = 0;
         evalZ = 0;
     }
 
-    private void Update()
-    {
+    private void Update() {
         var time = Time.time - startTime;
 
         if (time <= GraphTimeMultiplier.x) {

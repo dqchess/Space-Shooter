@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a very simple behaviour that constrains its transform to a CinemachinePath.  
     /// It can be used to animate any objects along a path, or as a Follow target for 
@@ -10,15 +9,13 @@ namespace Cinemachine
     /// </summary>
     [DocumentationSorting(21f, DocumentationSortingAttribute.Level.UserRef)]
     [ExecuteInEditMode]
-    public class CinemachineDollyCart : MonoBehaviour
-    {
+    public class CinemachineDollyCart : MonoBehaviour {
         /// <summary>The path to follow</summary>
         [Tooltip("The path to follow")]
         public CinemachinePathBase m_Path;
 
         /// <summary>This enum defines the options available for the update method.</summary>
-        public enum UpdateMethod
-        {
+        public enum UpdateMethod {
             /// <summary>Updated in normal MonoBehaviour Update.</summary>
             Update,
             /// <summary>Updated in sync with the Physics module, in FixedUpdate</summary>
@@ -43,24 +40,20 @@ namespace Cinemachine
         [FormerlySerializedAs("m_CurrentDistance")]
         public float m_Position;
 
-        void FixedUpdate()
-        {
+        void FixedUpdate() {
             if (m_UpdateMethod == UpdateMethod.FixedUpdate)
                 SetCartPosition(m_Position += m_Speed * Time.deltaTime);
         }
 
-        void Update()
-        {
+        void Update() {
             if (!Application.isPlaying)
                 SetCartPosition(m_Position);
             else if (m_UpdateMethod == UpdateMethod.Update)
                 SetCartPosition(m_Position += m_Speed * Time.deltaTime);
         }
 
-        void SetCartPosition(float distanceAlongPath)
-        {
-            if (m_Path != null)
-            {
+        void SetCartPosition(float distanceAlongPath) {
+            if (m_Path != null) {
                 m_Position = m_Path.NormalizeUnit(distanceAlongPath, m_PositionUnits);
                 transform.position = m_Path.EvaluatePositionAtUnit(m_Position, m_PositionUnits);
                 transform.rotation = m_Path.EvaluateOrientationAtUnit(m_Position, m_PositionUnits);

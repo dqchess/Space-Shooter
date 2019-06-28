@@ -1,23 +1,17 @@
-using UnityEngine;
-using UnityEditor;
 using System;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [InitializeOnLoad]
-    internal sealed class CinemachineSettings
-    {
-        public static class CinemachineCoreSettings
-        {
+    internal sealed class CinemachineSettings {
+        public static class CinemachineCoreSettings {
             private static readonly string hShowInGameGuidesKey = "CNMCN_Core_ShowInGameGuides";
-            public static bool ShowInGameGuides
-            {
+            public static bool ShowInGameGuides {
                 get { return EditorPrefs.GetBool(hShowInGameGuidesKey, true); }
-                set 
-                { 
-                    if (ShowInGameGuides != value)
-                    {
-                        EditorPrefs.SetBool(hShowInGameGuidesKey, value); 
+                set {
+                    if (ShowInGameGuides != value) {
+                        EditorPrefs.SetBool(hShowInGameGuidesKey, value);
                         UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
                     }
                 }
@@ -25,18 +19,14 @@ namespace Cinemachine.Editor
 
             private static readonly string kCoreActiveGizmoColourKey = "CNMCN_Core_Active_Gizmo_Colour";
             public static readonly Color kDefaultActiveColour = new Color32(255, 0, 0, 100);
-            public static Color ActiveGizmoColour
-            {
-                get
-                {
+            public static Color ActiveGizmoColour {
+                get {
                     string packedColour = EditorPrefs.GetString(kCoreActiveGizmoColourKey, PackColor(kDefaultActiveColour));
                     return UnpackColour(packedColour);
                 }
 
-                set
-                {
-                    if (ActiveGizmoColour != value)
-                    {
+                set {
+                    if (ActiveGizmoColour != value) {
                         string packedColour = PackColor(value);
                         EditorPrefs.SetString(kCoreActiveGizmoColourKey, packedColour);
                     }
@@ -45,18 +35,14 @@ namespace Cinemachine.Editor
 
             private static readonly string kCoreInactiveGizmoColourKey = "CNMCN_Core_Inactive_Gizmo_Colour";
             public static readonly Color kDefaultInactiveColour = new Color32(9, 54, 87, 100);
-            public static Color InactiveGizmoColour
-            {
-                get
-                {
+            public static Color InactiveGizmoColour {
+                get {
                     string packedColour = EditorPrefs.GetString(kCoreInactiveGizmoColourKey, PackColor(kDefaultInactiveColour));
                     return UnpackColour(packedColour);
                 }
 
-                set
-                {
-                    if (InactiveGizmoColour != value)
-                    {
+                set {
+                    if (InactiveGizmoColour != value) {
                         string packedColour = PackColor(value);
                         EditorPrefs.SetString(kCoreInactiveGizmoColourKey, packedColour);
                     }
@@ -64,131 +50,103 @@ namespace Cinemachine.Editor
             }
         }
 
-        public static class ComposerSettings
-        {
-            private static readonly string kOverlayOpacityKey           = "CNMCN_Overlay_Opacity";
+        public static class ComposerSettings {
+            private static readonly string kOverlayOpacityKey = "CNMCN_Overlay_Opacity";
             private static readonly string kComposerHardBoundsColourKey = "CNMCN_Composer_HardBounds_Colour";
             private static readonly string kComposerSoftBoundsColourKey = "CNMCN_Composer_SoftBounds_Colour";
-            private static readonly string kComposerTargetColourKey     = "CNMCN_Composer_Target_Colour";
-            private static readonly string kComposerTargetSizeKey       = "CNMCN_Composer_Target_Size";
+            private static readonly string kComposerTargetColourKey = "CNMCN_Composer_Target_Colour";
+            private static readonly string kComposerTargetSizeKey = "CNMCN_Composer_Target_Size";
 
             public const float kDefaultOverlayOpacity = 0.15f;
             public static readonly Color kDefaultHardBoundsColour = new Color32(255, 0, 72, 255);
             public static readonly Color kDefaultSoftBoundsColour = new Color32(0, 194, 255, 255);
             public static readonly Color kDefaultTargetColour = new Color32(255, 254, 25, 255);
 
-            public static float OverlayOpacity
-            {
+            public static float OverlayOpacity {
                 get { return EditorPrefs.GetFloat(kOverlayOpacityKey, kDefaultOverlayOpacity); }
-                set
-                {
-                    if (value != OverlayOpacity)
-                    {
+                set {
+                    if (value != OverlayOpacity) {
                         EditorPrefs.SetFloat(kOverlayOpacityKey, value);
                     }
                 }
             }
 
-            public static Color HardBoundsOverlayColour
-            {
-                get
-                {
+            public static Color HardBoundsOverlayColour {
+                get {
                     string packedColour = EditorPrefs.GetString(kComposerHardBoundsColourKey, PackColor(kDefaultHardBoundsColour));
                     return UnpackColour(packedColour);
                 }
 
-                set
-                {
-                    if (HardBoundsOverlayColour != value)
-                    {
+                set {
+                    if (HardBoundsOverlayColour != value) {
                         string packedColour = PackColor(value);
                         EditorPrefs.SetString(kComposerHardBoundsColourKey, packedColour);
                     }
                 }
             }
 
-            public static Color SoftBoundsOverlayColour
-            {
-                get
-                {
+            public static Color SoftBoundsOverlayColour {
+                get {
                     string packedColour = EditorPrefs.GetString(kComposerSoftBoundsColourKey, PackColor(kDefaultSoftBoundsColour));
                     return UnpackColour(packedColour);
                 }
 
-                set
-                {
-                    if (SoftBoundsOverlayColour != value)
-                    {
+                set {
+                    if (SoftBoundsOverlayColour != value) {
                         string packedColour = PackColor(value);
                         EditorPrefs.SetString(kComposerSoftBoundsColourKey, packedColour);
                     }
                 }
             }
 
-            public static Color TargetColour
-            {
-                get
-                {
+            public static Color TargetColour {
+                get {
                     string packedColour = EditorPrefs.GetString(kComposerTargetColourKey, PackColor(kDefaultTargetColour));
                     return UnpackColour(packedColour);
                 }
 
-                set
-                {
-                    if (TargetColour != value)
-                    {
+                set {
+                    if (TargetColour != value) {
                         string packedColour = PackColor(value);
                         EditorPrefs.SetString(kComposerTargetColourKey, packedColour);
                     }
                 }
             }
 
-            public static float TargetSize
-            {
-                get
-                {
+            public static float TargetSize {
+                get {
                     return EditorPrefs.GetFloat(kComposerTargetSizeKey, 5f);
                 }
 
-                set
-                {
-                    if (TargetSize != value)
-                    {
+                set {
+                    if (TargetSize != value) {
                         EditorPrefs.SetFloat(kComposerTargetSizeKey, value);
                     }
                 }
             }
         }
 
-        private static bool ShowCoreSettings
-        {
+        private static bool ShowCoreSettings {
             get { return EditorPrefs.GetBool(kCoreSettingsFoldKey, false); }
-            set
-            {
-                if (value != ShowCoreSettings)
-                {
+            set {
+                if (value != ShowCoreSettings) {
                     EditorPrefs.SetBool(kCoreSettingsFoldKey, value);
                 }
             }
         }
 
-        private static bool ShowComposerSettings
-        {
+        private static bool ShowComposerSettings {
             get { return EditorPrefs.GetBool(kComposerSettingsFoldKey, false); }
-            set
-            {
-                if (value != ShowComposerSettings)
-                {
+            set {
+                if (value != ShowComposerSettings) {
                     EditorPrefs.SetBool(kComposerSettingsFoldKey, value);
                 }
             }
         }
 
         private static Texture2D sCinemachineLogoTexture = null;
-        internal static Texture2D CinemachineLogoTexture
-        {
-            get
-            {
+        internal static Texture2D CinemachineLogoTexture {
+            get {
                 if (sCinemachineLogoTexture == null)
                     sCinemachineLogoTexture = Resources.Load<Texture2D>("cm_logo_sm");
                 if (sCinemachineLogoTexture != null)
@@ -198,10 +156,8 @@ namespace Cinemachine.Editor
         }
 
         private static Texture2D sCinemachineHeader = null;
-        internal static Texture2D CinemachineHeader
-        {
-            get
-            {
+        internal static Texture2D CinemachineHeader {
+            get {
                 if (sCinemachineHeader == null)
                     sCinemachineHeader = Resources.Load<Texture2D>("cinemachine_header");
                 ;
@@ -211,15 +167,13 @@ namespace Cinemachine.Editor
             }
         }
 
-        private static readonly string kCoreSettingsFoldKey     = "CNMCN_Core_Folded";
+        private static readonly string kCoreSettingsFoldKey = "CNMCN_Core_Folded";
         private static readonly string kComposerSettingsFoldKey = "CNMCN_Composer_Folded";
 
         internal static event Action AdditionalCategories = null;
 
-        static CinemachineSettings()
-        {
-            if (CinemachineLogoTexture != null)
-            {
+        static CinemachineSettings() {
+            if (CinemachineLogoTexture != null) {
                 EditorApplication.hierarchyWindowItemOnGUI += OnHierarchyGUI;
             }
         }
@@ -240,10 +194,8 @@ namespace Cinemachine.Editor
         private static Vector2 sScrollPosition = Vector2.zero;
 
         [PreferenceItem("Cinemachine")]
-        private static void OnGUI()
-        {
-            if (CinemachineHeader != null)
-            {
+        private static void OnGUI() {
+            if (CinemachineHeader != null) {
                 const float kWidth = 350f;
                 float aspectRatio = (float)CinemachineHeader.height / (float)CinemachineHeader.width;
                 GUILayout.BeginScrollView(Vector2.zero, false, false, GUILayout.Width(kWidth), GUILayout.Height(kWidth * aspectRatio));
@@ -262,22 +214,19 @@ namespace Cinemachine.Editor
             //    = EditorGUILayout.Toggle("Show Hidden Objects", CinemachineCore.sShowHiddenObjects);
 
             ShowCoreSettings = EditorGUILayout.Foldout(ShowCoreSettings, "Runtime Settings");
-            if (ShowCoreSettings)
-            {
+            if (ShowCoreSettings) {
                 EditorGUI.indentLevel++;
                 EditorGUI.BeginChangeCheck();
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.BeginChangeCheck();
                 Color newActiveGizmoColour = EditorGUILayout.ColorField(sCoreActiveGizmosColour, CinemachineCoreSettings.ActiveGizmoColour);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     CinemachineCoreSettings.ActiveGizmoColour = newActiveGizmoColour;
                     UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     CinemachineCoreSettings.ActiveGizmoColour = CinemachineCoreSettings.kDefaultActiveColour;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -286,14 +235,12 @@ namespace Cinemachine.Editor
                 EditorGUI.BeginChangeCheck();
                 Color newInactiveGizmoColour = EditorGUILayout.ColorField(sCoreInactiveGizmosColour, CinemachineCoreSettings.InactiveGizmoColour);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     CinemachineCoreSettings.InactiveGizmoColour = newInactiveGizmoColour;
                     UnityEditorInternal.InternalEditorUtility.RepaintAllViews();
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     CinemachineCoreSettings.InactiveGizmoColour = CinemachineCoreSettings.kDefaultInactiveColour;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -301,21 +248,18 @@ namespace Cinemachine.Editor
             }
 
             ShowComposerSettings = EditorGUILayout.Foldout(ShowComposerSettings, "Composer Settings");
-            if (ShowComposerSettings)
-            {
+            if (ShowComposerSettings) {
                 EditorGUI.indentLevel++;
                 EditorGUILayout.BeginHorizontal();
                 EditorGUI.BeginChangeCheck();
 
                 float overlayOpacity = EditorGUILayout.Slider(sComposerOverlayOpacity, ComposerSettings.OverlayOpacity, 0f, 1f);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ComposerSettings.OverlayOpacity = overlayOpacity;
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     ComposerSettings.OverlayOpacity = ComposerSettings.kDefaultOverlayOpacity;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -324,13 +268,11 @@ namespace Cinemachine.Editor
                 EditorGUI.BeginChangeCheck();
                 Color newHardEdgeColor = EditorGUILayout.ColorField(sComposerHardBoundsOverlay, ComposerSettings.HardBoundsOverlayColour);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ComposerSettings.HardBoundsOverlayColour = newHardEdgeColor;
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     ComposerSettings.HardBoundsOverlayColour = ComposerSettings.kDefaultHardBoundsColour;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -339,13 +281,11 @@ namespace Cinemachine.Editor
                 EditorGUI.BeginChangeCheck();
                 Color newSoftEdgeColor = EditorGUILayout.ColorField(sComposerSoftBoundsOverlay, ComposerSettings.SoftBoundsOverlayColour);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ComposerSettings.SoftBoundsOverlayColour = newSoftEdgeColor;
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     ComposerSettings.SoftBoundsOverlayColour = ComposerSettings.kDefaultSoftBoundsColour;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -354,13 +294,11 @@ namespace Cinemachine.Editor
                 EditorGUI.BeginChangeCheck();
                 Color newTargetColour = EditorGUILayout.ColorField(sComposerTargetOverlay, ComposerSettings.TargetColour);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ComposerSettings.TargetColour = newTargetColour;
                 }
 
-                if (GUILayout.Button("Reset"))
-                {
+                if (GUILayout.Button("Reset")) {
                     ComposerSettings.TargetColour = ComposerSettings.kDefaultTargetColour;
                 }
                 EditorGUILayout.EndHorizontal();
@@ -368,15 +306,13 @@ namespace Cinemachine.Editor
                 EditorGUI.BeginChangeCheck();
                 float targetSide = EditorGUILayout.FloatField(sComposerTargetOverlayPixels, ComposerSettings.TargetSize);
 
-                if (EditorGUI.EndChangeCheck())
-                {
+                if (EditorGUI.EndChangeCheck()) {
                     ComposerSettings.TargetSize = targetSide;
                 }
                 EditorGUI.indentLevel--;
             }
 
-            if (AdditionalCategories != null)
-            {
+            if (AdditionalCategories != null) {
                 AdditionalCategories();
             }
 
@@ -388,30 +324,24 @@ namespace Cinemachine.Editor
             //}
         }
 
-        private static void OnHierarchyGUI(int instanceID, Rect selectionRect)
-        {
+        private static void OnHierarchyGUI(int instanceID, Rect selectionRect) {
             GameObject instance = EditorUtility.InstanceIDToObject(instanceID) as GameObject;
-            if (instance == null)
-            {
+            if (instance == null) {
                 // Object in process of being deleted?
                 return;
             }
 
-            if (instance.GetComponent<CinemachineBrain>() != null)
-            {
+            if (instance.GetComponent<CinemachineBrain>() != null) {
                 Rect texRect = new Rect(selectionRect.xMax - selectionRect.height, selectionRect.yMin, selectionRect.height, selectionRect.height);
                 GUI.DrawTexture(texRect, CinemachineLogoTexture, ScaleMode.ScaleAndCrop);
             }
         }
 
-        internal static Color UnpackColour(string str)
-        {
-            if (!string.IsNullOrEmpty(str))
-            {
+        internal static Color UnpackColour(string str) {
+            if (!string.IsNullOrEmpty(str)) {
                 byte[] bytes = Base64Decode(str);
 
-                if ((bytes != null) && bytes.Length == 16)
-                {
+                if ((bytes != null) && bytes.Length == 16) {
                     float r = BitConverter.ToSingle(bytes, 0);
                     float g = BitConverter.ToSingle(bytes, 4);
                     float b = BitConverter.ToSingle(bytes, 8);
@@ -424,8 +354,7 @@ namespace Cinemachine.Editor
             return Color.white;
         }
 
-        internal static string PackColor(Color col)
-        {
+        internal static string PackColor(Color col) {
             byte[] bytes = new byte[16];
 
             byte[] rBytes = BitConverter.GetBytes(col.r);
@@ -441,13 +370,11 @@ namespace Cinemachine.Editor
             return Base64Encode(bytes);
         }
 
-        private static string Base64Encode(byte[] data)
-        {
+        private static string Base64Encode(byte[] data) {
             return Convert.ToBase64String(data);
         }
 
-        private static byte[] Base64Decode(string base64EncodedData)
-        {
+        private static byte[] Base64Decode(string base64EncodedData) {
             return Convert.FromBase64String(base64EncodedData);
         }
     }

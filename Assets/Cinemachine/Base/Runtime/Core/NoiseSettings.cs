@@ -1,8 +1,7 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is an asset that defines a noise profile.  A noise profile is the 
     /// shape of the noise as a function of time.  You can build arbitrarily complex shapes by
@@ -17,15 +16,13 @@ namespace Cinemachine
     /// asset, but it's super interesting!
     /// </summary>
     [DocumentationSorting(9, DocumentationSortingAttribute.Level.UserRef)]
-    public sealed class NoiseSettings : ScriptableObject
-    {
+    public sealed class NoiseSettings : ScriptableObject {
         /// <summary>
         /// Describes the behaviour for a channel of noise
         /// </summary>
         [DocumentationSorting(9.1f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct NoiseParams
-        {
+        public struct NoiseParams {
             /// <summary>The amplitude of the noise for this channel.  Larger numbers vibrate higher</summary>
             [Tooltip("The amplitude of the noise for this channel.  Larger numbers vibrate higher.")]
             public float Amplitude;
@@ -39,8 +36,7 @@ namespace Cinemachine
         /// </summary>
         [DocumentationSorting(9.2f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct TransformNoiseParams
-        {
+        public struct TransformNoiseParams {
             /// <summary>Noise definition for X-axis</summary>
             [Tooltip("Noise definition for X-axis")]
             public NoiseParams X;
@@ -71,8 +67,7 @@ namespace Cinemachine
         public TransformNoiseParams[] OrientationNoise { get { return m_Orientation; } }
 
         /// <summary>Clones the contents of the other asset into this one</summary>
-        public void CopyFrom(NoiseSettings other)
-        {
+        public void CopyFrom(NoiseSettings other) {
             m_Position = new TransformNoiseParams[other.m_Position.Length];
             other.m_Position.CopyTo(m_Position, 0);
             m_Orientation = new TransformNoiseParams[other.m_Orientation.Length];

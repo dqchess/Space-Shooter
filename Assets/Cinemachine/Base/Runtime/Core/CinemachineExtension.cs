@@ -1,23 +1,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// Base class for a Cinemachine Virtual Camera extension module.
     /// Hooks into the Cinemachine Pipeline.
     /// </summary>
     [DocumentationSorting(23, DocumentationSortingAttribute.Level.API)]
-    public abstract class CinemachineExtension : MonoBehaviour
-    {
+    public abstract class CinemachineExtension : MonoBehaviour {
         /// <summary>Useful constant for very small floats</summary>
         protected const float Epsilon = Utility.UnityVectorExtensions.Epsilon;
 
         /// <summary>Get the associated CinemachineVirtualCameraBase</summary>
-        public CinemachineVirtualCameraBase VirtualCamera 
-        { 
-            get
-            {
+        public CinemachineVirtualCameraBase VirtualCamera {
+            get {
                 if (m_vcamOwner == null)
                     m_vcamOwner = GetComponent<CinemachineVirtualCameraBase>();
                 return m_vcamOwner;
@@ -27,21 +23,18 @@ namespace Cinemachine
 
         /// <summary>Connect to virtual camera pipeline.
         /// Override implementations must call this base implementation</summary>
-        protected virtual void Awake()
-        {
+        protected virtual void Awake() {
             ConnectToVcam();
         }
 
         /// <summary>Disconnect from virtual camera pipeline.
         /// Override implementations must call this base implementation</summary>
-        protected virtual void OnDestroy()
-        {
+        protected virtual void OnDestroy() {
             if (VirtualCamera != null)
                 VirtualCamera.RemovePostPipelineStageHook(PostPipelineStageCallback);
         }
 
-        void ConnectToVcam()
-        {
+        void ConnectToVcam() {
             if (VirtualCamera == null)
                 Debug.LogError("CinemachineExtension requires a Cinemachine Virtual Camera component");
             else
@@ -62,8 +55,7 @@ namespace Cinemachine
         /// case be called for all the vcam children, vcam-specific state information
         /// should be stored here.  Just define a class to hold your state info
         /// and use it exclusively when calling this.</summary>
-        protected T GetExtraState<T>(ICinemachineCamera vcam) where T : class, new()
-        {
+        protected T GetExtraState<T>(ICinemachineCamera vcam) where T : class, new() {
             if (mExtraState == null)
                 mExtraState = new Dictionary<ICinemachineCamera, System.Object>();
             System.Object extra = null;
@@ -75,8 +67,7 @@ namespace Cinemachine
         /// <summary>Ineffeicient method to get all extra state infor for all vcams.  
         /// Intended for Editor use only, not runtime!
         /// </summary>
-        protected List<T> GetAllExtraStates<T>() where T : class, new()
-        {
+        protected List<T> GetAllExtraStates<T>() where T : class, new() {
             var list = new List<T>();
             if (mExtraState != null)
                 foreach (var v in mExtraState)

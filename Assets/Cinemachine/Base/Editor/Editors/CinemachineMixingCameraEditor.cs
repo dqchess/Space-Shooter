@@ -1,16 +1,13 @@
-using UnityEditor;
-using UnityEngine;
 using Cinemachine.Utility;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineMixingCamera))]
-    internal sealed class CinemachineMixingCameraEditor 
-        : CinemachineVirtualCameraBaseEditor<CinemachineMixingCamera>
-    {
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+    internal sealed class CinemachineMixingCameraEditor
+        : CinemachineVirtualCameraBaseEditor<CinemachineMixingCamera> {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
             for (int i = 0; i < CinemachineMixingCamera.MaxCameras; ++i)
                 excluded.Add(WeightPropertyName(i));
@@ -19,8 +16,7 @@ namespace Cinemachine.Editor
 
         static string WeightPropertyName(int i) { return "m_Weight" + i; }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             BeginInspector();
             DrawHeaderInInspector();
             DrawRemainingPropertiesInInspector();
@@ -34,12 +30,10 @@ namespace Cinemachine.Editor
 
             if (numCameras == 0)
                 EditorGUILayout.HelpBox("There are no Virtual Camera children", MessageType.Warning);
-            else 
-            {
+            else {
                 EditorGUILayout.Separator();
                 EditorGUILayout.LabelField("Child Camera Weights", EditorStyles.boldLabel);
-                for (int i = 0; i < numCameras; ++i)
-                {
+                for (int i = 0; i < numCameras; ++i) {
                     SerializedProperty prop = serializedObject.FindProperty(WeightPropertyName(i));
                     if (prop != null)
                         EditorGUILayout.PropertyField(prop, new GUIContent(children[i].Name));
@@ -51,8 +45,8 @@ namespace Cinemachine.Editor
 
                 if (children.Length > numCameras)
                     EditorGUILayout.HelpBox(
-                        "There are " + children.Length 
-                        + " child cameras.  A maximum of " + numCameras + " is supported.", 
+                        "There are " + children.Length
+                        + " child cameras.  A maximum of " + numCameras + " is supported.",
                         MessageType.Warning);
 
                 // Camera proportion indicator
@@ -66,8 +60,7 @@ namespace Cinemachine.Editor
         }
 
         void DrawProportionIndicator(
-            CinemachineVirtualCameraBase[] children, int numCameras, float totalWeight)
-        {
+            CinemachineVirtualCameraBase[] children, int numCameras, float totalWeight) {
             GUIStyle style = EditorStyles.centeredGreyMiniLabel;
             Color bkg = new Color(0.27f, 0.27f, 0.27f); // ack! no better way than this?
             Color fg = Color.Lerp(CinemachineBrain.GetSoloGUIColor(), bkg, 0.8f);
@@ -75,12 +68,10 @@ namespace Cinemachine.Editor
             Rect r = EditorGUILayout.GetControlRect(true, totalHeight);
             r.height /= numCameras; r.height -= 1;
             float fullWidth = r.width;
-            for (int i = 0; i < numCameras; ++i)
-            {
+            for (int i = 0; i < numCameras; ++i) {
                 float p = 0;
                 string label = children[i].Name;
-                if (totalWeight > UnityVectorExtensions.Epsilon)
-                {
+                if (totalWeight > UnityVectorExtensions.Epsilon) {
                     if (children[i].isActiveAndEnabled)
                         p = Target.GetWeight(i) / totalWeight;
                     else

@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ExplosionsShaderQueue : MonoBehaviour {
     public int AddQueue = 1;

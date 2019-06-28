@@ -1,17 +1,13 @@
-using UnityEngine;
-using UnityEditor;
 using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineTransposer))]
-    internal sealed class CinemachineTransposerEditor : BaseEditor<CinemachineTransposer>
-    {
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+    internal sealed class CinemachineTransposerEditor : BaseEditor<CinemachineTransposer> {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
-            switch (Target.m_BindingMode)
-            {
+            switch (Target.m_BindingMode) {
                 default:
                 case CinemachineTransposer.BindingMode.LockToTarget:
                     break;
@@ -38,8 +34,7 @@ namespace Cinemachine.Editor
             return excluded;
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             BeginInspector();
             if (Target.FollowTarget == null)
                 EditorGUILayout.HelpBox(
@@ -49,10 +44,8 @@ namespace Cinemachine.Editor
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.Selected, typeof(CinemachineTransposer))]
-        static void DrawTransposerGizmos(CinemachineTransposer target, GizmoType selectionType)
-        {
-            if (target.IsValid)
-            {
+        static void DrawTransposerGizmos(CinemachineTransposer target, GizmoType selectionType) {
+            if (target.IsValid) {
                 Color originalGizmoColour = Gizmos.color;
                 Gizmos.color = CinemachineCore.Instance.IsLive(target.VirtualCamera)
                     ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour

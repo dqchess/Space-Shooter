@@ -1,7 +1,6 @@
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a CinemachineComponent in the Aim section of the component pipeline.
     /// Its job is to aim the camera hard at the LookAt target.
@@ -10,8 +9,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineSameAsFollowObject : CinemachineComponentBase
-    {
+    public class CinemachineSameAsFollowObject : CinemachineComponentBase {
         /// <summary>True if component is enabled and has a Follow target defined</summary>
         public override bool IsValid { get { return enabled && FollowTarget != null; } }
 
@@ -23,8 +21,7 @@ namespace Cinemachine
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for calculating damping.  If less than
         /// zero, then target will snap to the center of the dead zone.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             if (IsValid)
                 curState.RawOrientation = FollowTarget.transform.rotation;
         }

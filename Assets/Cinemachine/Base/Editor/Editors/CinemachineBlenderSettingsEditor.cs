@@ -1,13 +1,11 @@
-using UnityEngine;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
-using System.Collections.Generic;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineBlenderSettings))]
-    internal sealed class CinemachineBlenderSettingsEditor : BaseEditor<CinemachineBlenderSettings>
-    {
+    internal sealed class CinemachineBlenderSettingsEditor : BaseEditor<CinemachineBlenderSettings> {
         private ReorderableList mBlendList;
 
         /// <summary>
@@ -18,15 +16,13 @@ namespace Cinemachine.Editor
         public GetAllVirtualCamerasDelegate GetAllVirtualCameras;
         public delegate CinemachineVirtualCameraBase[] GetAllVirtualCamerasDelegate();
 
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
             excluded.Add(FieldPath(x => x.m_CustomBlends));
             return excluded;
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             BeginInspector();
             if (mBlendList == null)
                 SetupBlendList();
@@ -40,16 +36,14 @@ namespace Cinemachine.Editor
 
         private string[] mCameraCandidates;
         private Dictionary<string, int> mCameraIndexLookup;
-        private void UpdateCameraCandidates()
-        {
+        private void UpdateCameraCandidates() {
             List<string> vcams = new List<string>();
             mCameraIndexLookup = new Dictionary<string, int>();
 
             CinemachineVirtualCameraBase[] candidates;
             if (GetAllVirtualCameras != null)
                 candidates = GetAllVirtualCameras();
-            else
-            {
+            else {
                 // Get all top-level (i.e. non-slave) virtual cameras
                 candidates = Resources.FindObjectsOfTypeAll(
                         typeof(CinemachineVirtualCameraBase)) as CinemachineVirtualCameraBase[];
@@ -69,8 +63,7 @@ namespace Cinemachine.Editor
                 mCameraIndexLookup[mCameraCandidates[i]] = i;
         }
 
-        private int GetCameraIndex(string name)
-        {
+        private int GetCameraIndex(string name) {
             if (name == null || mCameraIndexLookup == null)
                 return 0;
             if (!mCameraIndexLookup.ContainsKey(name))
@@ -78,8 +71,7 @@ namespace Cinemachine.Editor
             return mCameraIndexLookup[name];
         }
 
-        void SetupBlendList()
-        {
+        void SetupBlendList() {
             mBlendList = new ReorderableList(serializedObject,
                     serializedObject.FindProperty(() => Target.m_CustomBlends),
                     true, true, true, true);
@@ -91,27 +83,25 @@ namespace Cinemachine.Editor
             float vSpace = 2;
             float hSpace = 3;
             float floatFieldWidth = EditorGUIUtility.singleLineHeight * 2.5f;
-            mBlendList.drawHeaderCallback = (Rect rect) =>
-                {
-                    rect.width -= (EditorGUIUtility.singleLineHeight + 2 * hSpace);
-                    rect.width /= 3;
-                    Vector2 pos = rect.position; pos.x += EditorGUIUtility.singleLineHeight;
-                    rect.position = pos;
-                    EditorGUI.LabelField(rect, "From");
+            mBlendList.drawHeaderCallback = (Rect rect) => {
+                rect.width -= (EditorGUIUtility.singleLineHeight + 2 * hSpace);
+                rect.width /= 3;
+                Vector2 pos = rect.position; pos.x += EditorGUIUtility.singleLineHeight;
+                rect.position = pos;
+                EditorGUI.LabelField(rect, "From");
 
-                    pos.x += rect.width + hSpace; rect.position = pos;
-                    EditorGUI.LabelField(rect, "To");
+                pos.x += rect.width + hSpace; rect.position = pos;
+                EditorGUI.LabelField(rect, "To");
 
-                    pos.x += rect.width + hSpace; rect.width -= floatFieldWidth + hSpace; rect.position = pos;
-                    EditorGUI.LabelField(rect, "Style");
+                pos.x += rect.width + hSpace; rect.width -= floatFieldWidth + hSpace; rect.position = pos;
+                EditorGUI.LabelField(rect, "Style");
 
-                    pos.x += rect.width + hSpace; rect.width = floatFieldWidth; rect.position = pos;
-                    EditorGUI.LabelField(rect, "Time");
-                };
+                pos.x += rect.width + hSpace; rect.width = floatFieldWidth; rect.position = pos;
+                EditorGUI.LabelField(rect, "Time");
+            };
 
             mBlendList.drawElementCallback
-                = (Rect rect, int index, bool isActive, bool isFocused) =>
-                {
+                = (Rect rect, int index, bool isActive, bool isFocused) => {
                     SerializedProperty element
                         = mBlendList.serializedProperty.GetArrayElementAtIndex(index);
 
@@ -137,25 +127,23 @@ namespace Cinemachine.Editor
                     SerializedProperty styleProp = blendProp.FindPropertyRelative(() => def2.m_Style);
                     EditorGUI.PropertyField(rect, styleProp, GUIContent.none);
 
-                    if (styleProp.intValue != (int)CinemachineBlendDefinition.Style.Cut)
-                    {
+                    if (styleProp.intValue != (int)CinemachineBlendDefinition.Style.Cut) {
                         pos.x += rect.width + hSpace; rect.width = floatFieldWidth; rect.position = pos;
                         SerializedProperty timeProp = blendProp.FindPropertyRelative(() => def2.m_Time);
                         EditorGUI.PropertyField(rect, timeProp, GUIContent.none);
                     }
                 };
 
-            mBlendList.onAddCallback = (ReorderableList l) =>
-                {
-                    var index = l.serializedProperty.arraySize;
-                    ++l.serializedProperty.arraySize;
-                    SerializedProperty blendProp = l.serializedProperty.GetArrayElementAtIndex(
-                            index).FindPropertyRelative(() => def.m_Blend);
+            mBlendList.onAddCallback = (ReorderableList l) => {
+                var index = l.serializedProperty.arraySize;
+                ++l.serializedProperty.arraySize;
+                SerializedProperty blendProp = l.serializedProperty.GetArrayElementAtIndex(
+                        index).FindPropertyRelative(() => def.m_Blend);
 
-                    blendProp.FindPropertyRelative(() => def2.m_Style).enumValueIndex
-                        = (int)CinemachineBlendDefinition.Style.EaseInOut;
-                    blendProp.FindPropertyRelative(() => def2.m_Time).floatValue = 2f;
-                };
+                blendProp.FindPropertyRelative(() => def2.m_Style).enumValueIndex
+                    = (int)CinemachineBlendDefinition.Style.EaseInOut;
+                blendProp.FindPropertyRelative(() => def2.m_Time).floatValue = 2f;
+            };
         }
     }
 }

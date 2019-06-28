@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// As a part of the Cinemachine Pipeline implementing the Noise stage, this
     /// component adds Perlin Noise to the Camera state, in the Correction
@@ -17,8 +16,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineBasicMultiChannelPerlin : CinemachineComponentBase
-    {
+    public class CinemachineBasicMultiChannelPerlin : CinemachineComponentBase {
         /// <summary>
         /// Serialized property for referencing a NoiseSettings asset
         /// </summary>
@@ -51,8 +49,7 @@ namespace Cinemachine
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">How much to advance the perlin noise generator.
         /// Noise is only applied if this value is greater than or equal to 0</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             if (!IsValid || deltaTime < 0)
                 return;
 
@@ -73,8 +70,7 @@ namespace Cinemachine
         private float mNoiseTime = 0;
         private Vector3 mNoiseOffsets = Vector3.zero;
 
-        void Initialize()
-        {
+        void Initialize() {
             mInitialized = true;
             mNoiseTime = 0;
             mNoiseOffsets = new Vector3(
@@ -84,15 +80,12 @@ namespace Cinemachine
         }
 
         static Vector3 GetCombinedFilterResults(
-            NoiseSettings.TransformNoiseParams[] noiseParams, float time, Vector3 noiseOffsets)
-        {
+            NoiseSettings.TransformNoiseParams[] noiseParams, float time, Vector3 noiseOffsets) {
             float xPos = 0f;
             float yPos = 0f;
             float zPos = 0f;
-            if (noiseParams != null)
-            {
-                for (int i = 0; i < noiseParams.Length; ++i)
-                {
+            if (noiseParams != null) {
+                for (int i = 0; i < noiseParams.Length; ++i) {
                     NoiseSettings.TransformNoiseParams param = noiseParams[i];
                     Vector3 timeVal = new Vector3(param.X.Frequency, param.Y.Frequency, param.Z.Frequency) * time;
                     timeVal += noiseOffsets;

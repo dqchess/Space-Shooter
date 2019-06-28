@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ExplosionsShaderFloatCurves : MonoBehaviour
-{
+public class ExplosionsShaderFloatCurves : MonoBehaviour {
     public string ShaderProperty = "_BumpAmt";
     public int MaterialID = 0;
     public AnimationCurve FloatPropertyCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -13,8 +11,7 @@ public class ExplosionsShaderFloatCurves : MonoBehaviour
     private int propertyID;
     private float startTime;
 
-    private void Start()
-    {
+    private void Start() {
         var mats = GetComponent<Renderer>().materials;
         if (MaterialID >= mats.Length)
             Debug.Log("ShaderColorGradient: Material ID more than shader materials count.");
@@ -24,14 +21,12 @@ public class ExplosionsShaderFloatCurves : MonoBehaviour
         propertyID = Shader.PropertyToID(ShaderProperty);
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         startTime = Time.time;
         canUpdate = true;
     }
 
-    private void Update()
-    {
+    private void Update() {
         var time = Time.time - startTime;
         if (canUpdate) {
             var eval = FloatPropertyCurve.Evaluate(time / GraphTimeMultiplier) * GraphScaleMultiplier;

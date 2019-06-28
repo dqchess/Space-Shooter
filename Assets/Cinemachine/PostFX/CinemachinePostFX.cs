@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-// NOTE: If you are getting errors of the sort that say something like:
+﻿// NOTE: If you are getting errors of the sort that say something like:
 //     "The type or namespace name `PostProcessing' does not exist in the namespace"
 // it is because the PostProcessing v1 module has been removed from your project.
 //
@@ -10,8 +8,7 @@
 //   2 - Go into PlayerSettings/OtherSettings and remove the Scripting Define for UNITY_POST_PROCESSING_STACK_V1
 //
 
-namespace Cinemachine.PostFX
-{
+namespace Cinemachine.PostFX {
 #if UNITY_POST_PROCESSING_STACK_V1 && !UNITY_POST_PROCESSING_STACK_V2
     /// <summary>
     /// This behaviour is a liaison between Cinemachine with the Post-Processing v1 module.  You must 

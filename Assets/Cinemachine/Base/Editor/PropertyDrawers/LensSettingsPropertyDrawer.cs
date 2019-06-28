@@ -1,23 +1,19 @@
-using UnityEngine;
-using UnityEditor;
 using System.Reflection;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomPropertyDrawer(typeof(LensSettingsPropertyAttribute))]
-    public sealed  class LensSettingsPropertyDrawer : PropertyDrawer
-    {
+    public sealed class LensSettingsPropertyDrawer : PropertyDrawer {
         const int vSpace = 2;
         bool mExpanded = true;
         LensSettings def = new LensSettings(); // to access name strings
 
-        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
-        {
+        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             float height = EditorGUIUtility.singleLineHeight;
             rect.height = height;
             mExpanded = EditorGUI.Foldout(rect, mExpanded, label);
-            if (mExpanded)
-            {
+            if (mExpanded) {
                 bool ortho = false;
                 PropertyInfo pi = typeof(LensSettings).GetProperty(
                     "Orthographic", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -40,8 +36,7 @@ namespace Cinemachine.Editor
             }
         }
 
-        object GetPropertyValue(SerializedProperty property)
-        {
+        object GetPropertyValue(SerializedProperty property) {
             var targetObject = property.serializedObject.targetObject;
             var targetObjectClassType = targetObject.GetType();
             var field = targetObjectClassType.GetField(property.propertyPath);
@@ -50,8 +45,7 @@ namespace Cinemachine.Editor
             return null;
         }
 
-        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-        {
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label) {
             float height = EditorGUIUtility.singleLineHeight + vSpace;
             if (mExpanded)
                 height *= 5;

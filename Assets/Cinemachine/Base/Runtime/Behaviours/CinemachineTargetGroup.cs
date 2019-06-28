@@ -1,9 +1,8 @@
-using UnityEngine;
-using System;
 using Cinemachine.Utility;
+using System;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>Defines a group of target objects, each with a radius and a weight.
     /// The weight is used when calculating the average position of the target group.
     /// Higher-weighted members of the group will count more.
@@ -14,12 +13,11 @@ namespace Cinemachine
     [AddComponentMenu("Cinemachine/CinemachineTargetGroup")]
     [SaveDuringPlay]
     [ExecuteInEditMode]
-    public class CinemachineTargetGroup : MonoBehaviour
-    {
+    public class CinemachineTargetGroup : MonoBehaviour {
         /// <summary>Holds the information that represents a member of the group</summary>
         [DocumentationSorting(19.1f, DocumentationSortingAttribute.Level.UserRef)]
-        [Serializable] public struct Target
-        {
+        [Serializable]
+        public struct Target {
             /// <summary>The target objects.  This object's position and orientation will contribute to the 
             /// group's average position and orientation, in accordance with its weight</summary>
             [Tooltip("The target objects.  This object's position and orientation will contribute to the group's average position and orientation, in accordance with its weight")]
@@ -34,8 +32,7 @@ namespace Cinemachine
 
         /// <summary>How the group's position is calculated</summary>
         [DocumentationSorting(19.2f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum PositionMode
-        {
+        public enum PositionMode {
             ///<summary>Group position will be the center of the group's axis-aligned bounding box</summary>
             GroupCenter,
             /// <summary>Group position will be the weighted average of the positions of the members</summary>
@@ -48,8 +45,7 @@ namespace Cinemachine
 
         /// <summary>How the group's orientation is calculated</summary>
         [DocumentationSorting(19.3f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum RotationMode
-        {
+        public enum RotationMode {
             /// <summary>Manually set in the group's transform</summary>
             Manual,
             /// <summary>Weighted average of the orientation of its members.</summary>
@@ -61,8 +57,7 @@ namespace Cinemachine
         public RotationMode m_RotationMode = RotationMode.Manual;
 
         /// <summary>This enum defines the options available for the update method.</summary>
-        public enum UpdateMethod
-        {
+        public enum UpdateMethod {
             /// <summary>Updated in normal MonoBehaviour Update.</summary>
             Update,
             /// <summary>Updated in sync with the Physics module, in FixedUpdate</summary>
@@ -86,20 +81,15 @@ namespace Cinemachine
 
         /// <summary>The axis-aligned bounding box of the group, computed using the
         /// targets positions and radii</summary>
-        public Bounds BoundingBox
-        {
-            get
-            {
+        public Bounds BoundingBox {
+            get {
                 float averageWeight;
                 Vector3 center = CalculateAveragePosition(out averageWeight);
                 bool gotOne = false;
-                Bounds b = new Bounds(center, new Vector3(m_lastRadius*2, m_lastRadius*2, m_lastRadius*2));
-                if (averageWeight > UnityVectorExtensions.Epsilon)
-                {
-                    for (int i = 0; i < m_Targets.Length; ++i)
-                    {
-                        if (m_Targets[i].target != null)
-                        {
+                Bounds b = new Bounds(center, new Vector3(m_lastRadius * 2, m_lastRadius * 2, m_lastRadius * 2));
+                if (averageWeight > UnityVectorExtensions.Epsilon) {
+                    for (int i = 0; i < m_Targets.Length; ++i) {
+                        if (m_Targets[i].target != null) {
                             float w = m_Targets[i].weight;
                             if (w < averageWeight - UnityVectorExtensions.Epsilon)
                                 w = w / averageWeight;
@@ -123,10 +113,8 @@ namespace Cinemachine
         }
 
         /// <summary>Return true if there are no members with weight > 0</summary>
-        public bool IsEmpty 
-        {
-            get 
-            {
+        public bool IsEmpty {
+            get {
                 for (int i = 0; i < m_Targets.Length; ++i)
                     if (m_Targets[i].target != null && m_Targets[i].weight > UnityVectorExtensions.Epsilon)
                         return false;
@@ -137,19 +125,15 @@ namespace Cinemachine
         /// <summary>The axis-aligned bounding box of the group, in a specific reference frame</summary>
         /// <param name="mView">The frame of reference in which to compute the bounding box</param>
         /// <returns>The axis-aligned bounding box of the group, in the desired frame of reference</returns>
-        public Bounds GetViewSpaceBoundingBox(Matrix4x4 mView)
-        {
+        public Bounds GetViewSpaceBoundingBox(Matrix4x4 mView) {
             Matrix4x4 inverseView = mView.inverse;
             float averageWeight;
             Vector3 center = inverseView.MultiplyPoint3x4(CalculateAveragePosition(out averageWeight));
             bool gotOne = false;
-            Bounds b = new Bounds(center, new Vector3(m_lastRadius*2, m_lastRadius*2, m_lastRadius*2));
-            if (averageWeight > UnityVectorExtensions.Epsilon)
-            {
-                for (int i = 0; i < m_Targets.Length; ++i)
-                {
-                    if (m_Targets[i].target != null)
-                    {
+            Bounds b = new Bounds(center, new Vector3(m_lastRadius * 2, m_lastRadius * 2, m_lastRadius * 2));
+            if (averageWeight > UnityVectorExtensions.Epsilon) {
+                for (int i = 0; i < m_Targets.Length; ++i) {
+                    if (m_Targets[i].target != null) {
                         float w = m_Targets[i].weight;
                         if (w < averageWeight - UnityVectorExtensions.Epsilon)
                             w = w / averageWeight;
@@ -172,15 +156,12 @@ namespace Cinemachine
             return b;
         }
 
-        Vector3 CalculateAveragePosition(out float averageWeight)
-        {
+        Vector3 CalculateAveragePosition(out float averageWeight) {
             Vector3 pos = Vector3.zero;
             float weight = 0;
             int numTargets = 0;
-            for (int i = 0; i < m_Targets.Length; ++i)
-            {
-                if (m_Targets[i].target != null && m_Targets[i].weight > UnityVectorExtensions.Epsilon)
-                {
+            for (int i = 0; i < m_Targets.Length; ++i) {
+                if (m_Targets[i].target != null && m_Targets[i].weight > UnityVectorExtensions.Epsilon) {
                     ++numTargets;
                     weight += m_Targets[i].weight;
                     pos += m_Targets[i].target.position * m_Targets[i].weight;
@@ -188,8 +169,7 @@ namespace Cinemachine
             }
             if (weight > UnityVectorExtensions.Epsilon)
                 pos /= weight;
-            if (numTargets == 0)
-            {
+            if (numTargets == 0) {
                 averageWeight = 0;
                 return transform.position;
             }
@@ -197,13 +177,10 @@ namespace Cinemachine
             return pos;
         }
 
-        Quaternion CalculateAverageOrientation()
-        {
+        Quaternion CalculateAverageOrientation() {
             Quaternion r = Quaternion.identity;
-            for (int i = 0; i < m_Targets.Length; ++i)
-            {
-                if (m_Targets[i].target != null)
-                {
+            for (int i = 0; i < m_Targets.Length; ++i) {
+                if (m_Targets[i].target != null) {
                     float w = m_Targets[i].weight;
                     Quaternion q = m_Targets[i].target.rotation;
                     // This is probably bogus
@@ -213,10 +190,8 @@ namespace Cinemachine
             return r.Normalized();
         }
 
-        private void OnValidate()
-        {
-            for (int i = 0; i < m_Targets.Length; ++i)
-            {
+        private void OnValidate() {
+            for (int i = 0; i < m_Targets.Length; ++i) {
                 if (m_Targets[i].weight < 0)
                     m_Targets[i].weight = 0;
                 if (m_Targets[i].radius < 0)
@@ -224,30 +199,25 @@ namespace Cinemachine
             }
         }
 
-        void FixedUpdate()
-        {
+        void FixedUpdate() {
             if (m_UpdateMethod == UpdateMethod.FixedUpdate)
                 UpdateTransform();
         }
 
-        void Update()
-        {
+        void Update() {
             if (!Application.isPlaying || m_UpdateMethod == UpdateMethod.Update)
                 UpdateTransform();
         }
 
-        void LateUpdate()
-        {
+        void LateUpdate() {
             if (m_UpdateMethod == UpdateMethod.LateUpdate)
                 UpdateTransform();
         }
 
-        void UpdateTransform()
-        {
+        void UpdateTransform() {
             if (IsEmpty)
                 return;
-            switch (m_PositionMode)
-            {
+            switch (m_PositionMode) {
                 case PositionMode.GroupCenter:
                     transform.position = BoundingBox.center;
                     break;
@@ -256,8 +226,7 @@ namespace Cinemachine
                     transform.position = CalculateAveragePosition(out averageWeight);
                     break;
             }
-            switch (m_RotationMode)
-            {
+            switch (m_RotationMode) {
                 case RotationMode.Manual:
                     break;
                 case RotationMode.GroupAverage:

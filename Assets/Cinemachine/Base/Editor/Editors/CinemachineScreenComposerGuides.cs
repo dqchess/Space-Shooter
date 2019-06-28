@@ -1,11 +1,9 @@
-using UnityEngine;
-using UnityEditor;
 using Cinemachine.Utility;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
-    internal class CinemachineScreenComposerGuides
-    {
+namespace Cinemachine.Editor {
+    internal class CinemachineScreenComposerGuides {
         public delegate Rect RectGetter();
         public delegate void RectSetter(Rect r);
         public delegate SerializedObject ObjectGetter();
@@ -19,10 +17,8 @@ namespace Cinemachine.Editor
 
         public const float kGuideBarWidthPx = 3f;
 
-        public void SetNewBounds(Rect oldHard, Rect oldSoft, Rect newHard, Rect newSoft)
-        {
-            if ((oldSoft != newSoft) || (oldHard != newHard))
-            {
+        public void SetNewBounds(Rect oldHard, Rect oldSoft, Rect newHard, Rect newSoft) {
+            if ((oldSoft != newSoft) || (oldHard != newHard)) {
                 Undo.RecordObject(Target().targetObject, "Composer Bounds");
                 if (oldSoft != newSoft)
                     SetSoftGuide(newSoft);
@@ -32,8 +28,7 @@ namespace Cinemachine.Editor
             }
         }
 
-        public void OnGUI_DrawGuides(bool isLive, Camera outputCamera, LensSettings lens, bool showHardGuides)
-        {
+        public void OnGUI_DrawGuides(bool isLive, Camera outputCamera, LensSettings lens, bool showHardGuides) {
             Rect cameraRect = outputCamera.pixelRect;
             float screenWidth = cameraRect.width;
             float screenHeight = cameraRect.height;
@@ -48,8 +43,7 @@ namespace Cinemachine.Editor
             Color hardBarsColour = CinemachineSettings.ComposerSettings.HardBoundsOverlayColour;
             Color softBarsColour = CinemachineSettings.ComposerSettings.SoftBoundsOverlayColour;
             float overlayOpacity = CinemachineSettings.ComposerSettings.OverlayOpacity;
-            if (!isLive)
-            {
+            if (!isLive) {
                 softBarsColour = CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
                 hardBarsColour = Color.Lerp(softBarsColour, Color.black, 0.5f);
                 overlayOpacity /= 2;
@@ -126,8 +120,7 @@ namespace Cinemachine.Editor
         }
 
         // For dragging the bars - order defines precedence
-        private enum DragBar
-        {
+        private enum DragBar {
             Center,
             SoftBarLineLeft, SoftBarLineTop, SoftBarLineRight, SoftBarLineBottom,
             HardBarLineLeft, HardBarLineTop, HardBarLineRight, HardBarLineBottom,
@@ -136,18 +129,14 @@ namespace Cinemachine.Editor
         private DragBar mDragging = DragBar.NONE;
         private Rect[] mDragBars = new Rect[9];
 
-        private void OnGuiHandleBarDragging(float screenWidth, float screenHeight)
-        {
+        private void OnGuiHandleBarDragging(float screenWidth, float screenHeight) {
             if (Event.current.type == EventType.MouseUp)
                 mDragging = DragBar.NONE;
-            if (Event.current.type == EventType.MouseDown)
-            {
+            if (Event.current.type == EventType.MouseDown) {
                 mDragging = DragBar.NONE;
-                for (DragBar i = DragBar.Center; i < DragBar.NONE && mDragging == DragBar.NONE; ++i)
-                {
+                for (DragBar i = DragBar.Center; i < DragBar.NONE && mDragging == DragBar.NONE; ++i) {
                     Vector2 slop = new Vector2(5f, 5f);
-                    if (i == DragBar.Center)
-                    {
+                    if (i == DragBar.Center) {
                         if (mDragBars[(int)i].width > 3f * slop.x)
                             slop.x = -slop.x;
                         if (mDragBars[(int)i].height > 3f * slop.y)
@@ -159,8 +148,7 @@ namespace Cinemachine.Editor
                 }
             }
 
-            if (mDragging != DragBar.NONE && Event.current.type == EventType.MouseDrag)
-            {
+            if (mDragging != DragBar.NONE && Event.current.type == EventType.MouseDrag) {
                 Vector2 d = new Vector2(
                         Event.current.delta.x / screenWidth,
                         Event.current.delta.y / screenHeight);
@@ -169,8 +157,7 @@ namespace Cinemachine.Editor
                 Rect newHard = GetHardGuide();
                 Rect newSoft = GetSoftGuide();
                 Vector2 changed = Vector2.zero;
-                switch (mDragging)
-                {
+                switch (mDragging) {
                     case DragBar.Center: newSoft.position += d; break;
                     case DragBar.SoftBarLineLeft: newSoft = newSoft.Inflated(new Vector2(-d.x, 0)); break;
                     case DragBar.SoftBarLineRight: newSoft = newSoft.Inflated(new Vector2(d.x, 0)); break;

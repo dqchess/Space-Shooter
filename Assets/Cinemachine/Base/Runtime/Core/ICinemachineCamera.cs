@@ -1,12 +1,10 @@
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// An abstract representation of a virtual camera which lives within the Unity scene
     /// </summary>
-    public interface ICinemachineCamera
-    {
+    public interface ICinemachineCamera {
         /// <summary>
         /// Gets the name of this virtual camera. For use when deciding how to blend
         /// to or from this camera

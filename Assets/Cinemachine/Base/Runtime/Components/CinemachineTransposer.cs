@@ -1,8 +1,7 @@
 using Cinemachine.Utility;
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a CinemachineComponent in the Body section of the component pipeline. 
     /// Its job is to position the camera in a fixed relationship to the vcam's Follow 
@@ -16,14 +15,12 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineTransposer : CinemachineComponentBase
-    {
+    public class CinemachineTransposer : CinemachineComponentBase {
         /// <summary>
         /// The coordinate space to use when interpreting the offset from the target
         /// </summary>
         [DocumentationSorting(5.01f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum BindingMode
-        {
+        public enum BindingMode {
             /// <summary>
             /// Camera will be bound to the Follow target using a frame of reference consisting
             /// of the target's local frame at the moment when the virtual camera was enabled,
@@ -99,26 +96,22 @@ namespace Cinemachine
         [Tooltip("How aggressively the camera tries to track the target rotation's Z angle.  Small numbers are more responsive.  Larger numbers give a more heavy slowly responding camera.")]
         public float m_RollDamping = 0f;
 
-        protected virtual void OnValidate()
-        {
+        protected virtual void OnValidate() {
             m_FollowOffset = EffectiveOffset;
         }
-        
+
         /// <summary>Get the target offset, with sanitization</summary>
-        protected Vector3 EffectiveOffset 
-        { 
-            get 
-            { 
-                Vector3 offset = m_FollowOffset; 
-                if (m_BindingMode == BindingMode.SimpleFollowWithWorldUp)
-                {
+        protected Vector3 EffectiveOffset {
+            get {
+                Vector3 offset = m_FollowOffset;
+                if (m_BindingMode == BindingMode.SimpleFollowWithWorldUp) {
                     offset.x = 0;
                     offset.z = -Mathf.Abs(offset.z);
                 }
                 return offset;
-            } 
+            }
         }
-        
+
         /// <summary>True if component is enabled and has a valid Follow target</summary>
         public override bool IsValid { get { return enabled && FollowTarget != null; } }
 
@@ -129,12 +122,10 @@ namespace Cinemachine
         /// <summary>Positions the virtual camera according to the transposer rules.</summary>
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for damping.  If less than 0, no damping is done.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachineTransposer.MutateCameraState");
             InitPrevFrameStateInfo(ref curState, deltaTime);
-            if (IsValid)
-            {
+            if (IsValid) {
                 Vector3 pos;
                 Quaternion orient;
                 Vector3 offset = EffectiveOffset;
@@ -148,8 +139,7 @@ namespace Cinemachine
         /// <summary>API for the editor, to process a position drag from the user.
         /// This implementation adds the delta to the follow offset.</summary>
         /// <param name="delta">The amount dragged this frame</param>
-        public override void OnPositionDragged(Vector3 delta)
-        {
+        public override void OnPositionDragged(Vector3 delta) {
             Quaternion targetOrientation = GetReferenceOrientation(VcamState.ReferenceUp);
             Vector3 localOffset = Quaternion.Inverse(targetOrientation) * delta;
             m_FollowOffset += localOffset;
@@ -158,16 +148,13 @@ namespace Cinemachine
 
         /// <summary>Initializes the state for previous frame if appropriate.</summary>
         protected void InitPrevFrameStateInfo(
-            ref CameraState curState, float deltaTime)
-        {
-            if (m_previousTarget != FollowTarget || deltaTime < 0)
-            {
+            ref CameraState curState, float deltaTime) {
+            if (m_previousTarget != FollowTarget || deltaTime < 0) {
                 m_previousTarget = FollowTarget;
-                m_targetOrientationOnAssign 
+                m_targetOrientationOnAssign
                     = (m_previousTarget == null) ? Quaternion.identity : FollowTarget.rotation;
             }
-            if (deltaTime < 0)
-            {
+            if (deltaTime < 0) {
                 m_PreviousTargetPosition = curState.RawPosition;
                 m_PreviousReferenceOrientation = GetReferenceOrientation(curState.ReferenceUp);
             }
@@ -181,13 +168,11 @@ namespace Cinemachine
         /// <param name="outTargetOrient">Damped target orientation</param>
         protected void TrackTarget(
             float deltaTime, Vector3 up, Vector3 desiredCameraOffset,
-            out Vector3 outTargetPosition, out Quaternion outTargetOrient)
-        {
+            out Vector3 outTargetPosition, out Quaternion outTargetOrient) {
             Quaternion targetOrientation = GetReferenceOrientation(up);
             Quaternion dampedOrientation = targetOrientation;
-            if (deltaTime >= 0)
-            {
-                Vector3 relative = (Quaternion.Inverse(m_PreviousReferenceOrientation) 
+            if (deltaTime >= 0) {
+                Vector3 relative = (Quaternion.Inverse(m_PreviousReferenceOrientation)
                     * targetOrientation).eulerAngles;
                 for (int i = 0; i < 3; ++i)
                     if (relative[i] > 180)
@@ -202,8 +187,7 @@ namespace Cinemachine
             Vector3 worldOffset = targetPosition - currentPosition;
 
             // Adjust for damping, which is done in camera-offset-local coords
-            if (deltaTime >= 0)
-            {
+            if (deltaTime >= 0) {
                 Quaternion dampingSpace;
                 if (desiredCameraOffset.AlmostZero())
                     dampingSpace = VcamState.RawOrientation;
@@ -220,46 +204,39 @@ namespace Cinemachine
         /// <summary>
         /// Damping speeds for each of the 3 axes of the offset from target
         /// </summary>
-        protected Vector3 Damping
-        {
-            get 
-            { 
-                switch (m_BindingMode)
-                {
+        protected Vector3 Damping {
+            get {
+                switch (m_BindingMode) {
                     case BindingMode.SimpleFollowWithWorldUp:
-                        return new Vector3(0, m_YDamping, m_ZDamping); 
+                        return new Vector3(0, m_YDamping, m_ZDamping);
                     default:
-                        return new Vector3(m_XDamping, m_YDamping, m_ZDamping); 
+                        return new Vector3(m_XDamping, m_YDamping, m_ZDamping);
                 }
-            } 
+            }
         }
 
         /// <summary>
         /// Damping speeds for each of the 3 axes of the target's rotation
         /// </summary>
-        protected Vector3 AngularDamping
-        {
-            get 
-            { 
-                switch (m_BindingMode)
-                {
+        protected Vector3 AngularDamping {
+            get {
+                switch (m_BindingMode) {
                     case BindingMode.LockToTargetNoRoll:
-                        return new Vector3(m_PitchDamping, m_YawDamping, 0); 
+                        return new Vector3(m_PitchDamping, m_YawDamping, 0);
                     case BindingMode.LockToTargetWithWorldUp:
-                        return new Vector3(0, m_YawDamping, 0); 
+                        return new Vector3(0, m_YawDamping, 0);
                     case BindingMode.LockToTargetOnAssign:
                     case BindingMode.WorldSpace:
                     case BindingMode.SimpleFollowWithWorldUp:
                         return Vector3.zero;
                     default:
-                        return new Vector3(m_PitchDamping, m_YawDamping, m_RollDamping); 
+                        return new Vector3(m_PitchDamping, m_YawDamping, m_RollDamping);
                 }
-            } 
+            }
         }
 
         /// <summary>Internal API for the Inspector Editor, so it can draw a marker at the target</summary>
-        public Vector3 GeTargetCameraPosition(Vector3 worldUp)
-        {
+        public Vector3 GeTargetCameraPosition(Vector3 worldUp) {
             if (!IsValid)
                 return Vector3.zero;
             return FollowTarget.position + GetReferenceOrientation(worldUp) * EffectiveOffset;
@@ -272,13 +249,10 @@ namespace Cinemachine
         Transform m_previousTarget = null;
 
         /// <summary>Internal API for the Inspector Editor, so it can draw a marker at the target</summary>
-        public Quaternion GetReferenceOrientation(Vector3 worldUp)
-        {
-            if (FollowTarget != null)
-            {
+        public Quaternion GetReferenceOrientation(Vector3 worldUp) {
+            if (FollowTarget != null) {
                 Quaternion targetOrientation = FollowTarget.rotation;
-                switch (m_BindingMode)
-                {
+                switch (m_BindingMode) {
                     case BindingMode.LockToTargetOnAssign:
                         return m_targetOrientationOnAssign;
                     case BindingMode.LockToTargetWithWorldUp:
@@ -287,22 +261,20 @@ namespace Cinemachine
                         return Quaternion.LookRotation(targetOrientation * Vector3.forward, worldUp);
                     case BindingMode.LockToTarget:
                         return targetOrientation;
-                    case BindingMode.SimpleFollowWithWorldUp:
-                    {
-                        Vector3 dir = FollowTarget.position - VcamState.RawPosition;
-                        if (dir.AlmostZero())
-                            break;
-                        return Uppify(Quaternion.LookRotation(dir, worldUp), worldUp);
-                    }
+                    case BindingMode.SimpleFollowWithWorldUp: {
+                            Vector3 dir = FollowTarget.position - VcamState.RawPosition;
+                            if (dir.AlmostZero())
+                                break;
+                            return Uppify(Quaternion.LookRotation(dir, worldUp), worldUp);
+                        }
                     default:
                         break;
                 }
             }
-            return Quaternion.identity; 
+            return Quaternion.identity;
         }
 
-        static Quaternion Uppify(Quaternion q, Vector3 up)
-        {
+        static Quaternion Uppify(Quaternion q, Vector3 up) {
             Quaternion r = Quaternion.FromToRotation(q * Vector3.up, up);
             return r * q;
         }

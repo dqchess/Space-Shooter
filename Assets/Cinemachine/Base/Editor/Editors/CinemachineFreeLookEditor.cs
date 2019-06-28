@@ -1,31 +1,26 @@
-﻿using UnityEngine;
-using UnityEditor;
-using Cinemachine.Editor;
-using System.Collections.Generic;
+﻿using Cinemachine.Editor;
 using Cinemachine.Utility;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     [CustomEditor(typeof(CinemachineFreeLook))]
-    internal sealed class CinemachineFreeLookEditor 
-        : CinemachineVirtualCameraBaseEditor<CinemachineFreeLook>
-    {
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+    internal sealed class CinemachineFreeLookEditor
+        : CinemachineVirtualCameraBaseEditor<CinemachineFreeLook> {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
             excluded.Add(FieldPath(x => x.m_Orbits));
             if (!Target.m_CommonLens)
                 excluded.Add(FieldPath(x => x.m_Lens));
-            if (Target.m_BindingMode == CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp)
-            {
+            if (Target.m_BindingMode == CinemachineTransposer.BindingMode.SimpleFollowWithWorldUp) {
                 excluded.Add(FieldPath(x => x.m_Heading));
                 excluded.Add(FieldPath(x => x.m_RecenterToTargetHeading));
             }
             return excluded;
         }
 
-        protected override void OnDisable()
-        {
+        protected override void OnDisable() {
             base.OnDisable();
 
             // Must destroy child editors or we get exceptions
@@ -35,8 +30,7 @@ namespace Cinemachine
                         UnityEngine.Object.DestroyImmediate(e);
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             // Ordinary properties
             BeginInspector();
             DrawHeaderInInspector();
@@ -47,8 +41,7 @@ namespace Cinemachine
             // Orbits
             EditorGUI.BeginChangeCheck();
             SerializedProperty orbits = FindProperty(x => x.m_Orbits);
-            for (int i = 0; i < CinemachineFreeLook.RigNames.Length; ++i)
-            {
+            for (int i = 0; i < CinemachineFreeLook.RigNames.Length; ++i) {
                 float hSpace = 3;
                 SerializedProperty orbit = orbits.GetArrayElementAtIndex(i);
                 Rect rect = EditorGUILayout.GetControlRect(true);
@@ -57,21 +50,20 @@ namespace Cinemachine
                 rect.width = rect.width / 2 - hSpace;
 
                 float oldWidth = EditorGUIUtility.labelWidth;
-                EditorGUIUtility.labelWidth = rect.width / 2; 
+                EditorGUIUtility.labelWidth = rect.width / 2;
                 SerializedProperty heightProp = orbit.FindPropertyRelative(() => Target.m_Orbits[i].m_Height);
                 EditorGUI.PropertyField(rect, heightProp, new GUIContent("Height"));
                 rect.x += rect.width + hSpace;
                 SerializedProperty radiusProp = orbit.FindPropertyRelative(() => Target.m_Orbits[i].m_Radius);
                 EditorGUI.PropertyField(rect, radiusProp, new GUIContent("Radius"));
-                EditorGUIUtility.labelWidth = oldWidth; 
+                EditorGUIUtility.labelWidth = oldWidth;
             }
             if (EditorGUI.EndChangeCheck())
                 serializedObject.ApplyModifiedProperties();
 
             // Rigs
             UpdateRigEditors();
-            for (int i = 0; i < m_editors.Length; ++i)
-            {
+            for (int i = 0; i < m_editors.Length; ++i) {
                 if (m_editors[i] == null)
                     continue;
                 EditorGUILayout.Separator();
@@ -90,18 +82,15 @@ namespace Cinemachine
         string[] RigNames;
         CinemachineVirtualCameraBase[] m_rigs;
         UnityEditor.Editor[] m_editors;
-        void UpdateRigEditors()
-        {
+        void UpdateRigEditors() {
             RigNames = CinemachineFreeLook.RigNames;
             if (m_rigs == null)
                 m_rigs = new CinemachineVirtualCameraBase[RigNames.Length];
             if (m_editors == null)
                 m_editors = new UnityEditor.Editor[RigNames.Length];
-            for (int i = 0; i < RigNames.Length; ++i)
-            {
+            for (int i = 0; i < RigNames.Length; ++i) {
                 CinemachineVirtualCamera rig = Target.GetRig(i);
-                if (rig == null || rig != m_rigs[i])
-                {
+                if (rig == null || rig != m_rigs[i]) {
                     m_rigs[i] = rig;
                     if (m_editors[i] != null)
                         UnityEngine.Object.DestroyImmediate(m_editors[i]);
@@ -116,13 +105,10 @@ namespace Cinemachine
         /// Register with CinemachineFreeLook to create the pipeline in an undo-friendly manner
         /// </summary>
         [InitializeOnLoad]
-        class CreateRigWithUndo
-        {
-            static CreateRigWithUndo()
-            {
+        class CreateRigWithUndo {
+            static CreateRigWithUndo() {
                 CinemachineFreeLook.CreateRigOverride
-                    = (CinemachineFreeLook vcam, string name, CinemachineVirtualCamera copyFrom) =>
-                    {
+                    = (CinemachineFreeLook vcam, string name, CinemachineVirtualCamera copyFrom) => {
                         // Create a new rig with default components
                         GameObject go = new GameObject(name);
                         Undo.RegisterCreatedObjectUndo(go, "created rig");
@@ -131,24 +117,21 @@ namespace Cinemachine
                         Undo.RecordObject(rig, "creating rig");
                         if (copyFrom != null)
                             ReflectionHelpers.CopyFields(copyFrom, rig);
-                        else
-                        {
+                        else {
                             go = rig.GetComponentOwner().gameObject;
                             Undo.RecordObject(Undo.AddComponent<CinemachineOrbitalTransposer>(go), "creating rig");
                             Undo.RecordObject(Undo.AddComponent<CinemachineComposer>(go), "creating rig");
                         }
                         return rig;
                     };
-                CinemachineFreeLook.DestroyRigOverride = (GameObject rig) =>
-                    {
-                        Undo.DestroyObjectImmediate(rig);
-                    };
+                CinemachineFreeLook.DestroyRigOverride = (GameObject rig) => {
+                    Undo.DestroyObjectImmediate(rig);
+                };
             }
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.Selected, typeof(CinemachineFreeLook))]
-        private static void DrawFreeLookGizmos(CinemachineFreeLook vcam, GizmoType selectionType)
-        {
+        private static void DrawFreeLookGizmos(CinemachineFreeLook vcam, GizmoType selectionType) {
             // Standard frustum and logo
             CinemachineBrainEditor.DrawVirtualCameraBaseGizmos(vcam, selectionType);
 
@@ -158,8 +141,7 @@ namespace Cinemachine
                 ? CinemachineSettings.CinemachineCoreSettings.ActiveGizmoColour
                 : CinemachineSettings.CinemachineCoreSettings.InactiveGizmoColour;
 
-            if (vcam.Follow != null)
-            {
+            if (vcam.Follow != null) {
                 Vector3 pos = vcam.Follow.position;
                 Vector3 up = Vector3.up;
                 CinemachineBrain brain = CinemachineCore.Instance.FindPotentialTargetBrain(vcam);
@@ -185,15 +167,13 @@ namespace Cinemachine
             Gizmos.color = originalGizmoColour;
         }
 
-        private static void DrawCameraPath(Vector3 atPos, Quaternion orient, CinemachineFreeLook vcam)
-        {
+        private static void DrawCameraPath(Vector3 atPos, Quaternion orient, CinemachineFreeLook vcam) {
             Matrix4x4 prevMatrix = Gizmos.matrix;
             Gizmos.matrix = Matrix4x4.TRS(atPos, orient, Vector3.one);
 
             const int kNumStepsPerPair = 30;
             Vector3 currPos = vcam.GetLocalPositionForCameraFromInput(0f);
-            for (int i = 1; i < kNumStepsPerPair + 1; ++i)
-            {
+            for (int i = 1; i < kNumStepsPerPair + 1; ++i) {
                 float t = (float)i / (float)kNumStepsPerPair;
                 Vector3 nextPos = vcam.GetLocalPositionForCameraFromInput(t);
                 Gizmos.DrawLine(currPos, nextPos);

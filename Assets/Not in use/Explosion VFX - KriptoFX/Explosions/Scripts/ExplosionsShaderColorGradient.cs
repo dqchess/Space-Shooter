@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ExplosionsShaderColorGradient : MonoBehaviour
-{
+public class ExplosionsShaderColorGradient : MonoBehaviour {
     public string ShaderProperty = "_TintColor";
     public int MaterialID = 0;
     public Gradient Color = new Gradient();
@@ -15,8 +13,7 @@ public class ExplosionsShaderColorGradient : MonoBehaviour
     private Color oldColor;
 
     // Use this for initialization
-    private void Start()
-    {
+    private void Start() {
         var mats = GetComponent<Renderer>().materials;
         if (MaterialID >= mats.Length)
             Debug.Log("ShaderColorGradient: Material ID more than shader materials count.");
@@ -27,14 +24,12 @@ public class ExplosionsShaderColorGradient : MonoBehaviour
         oldColor = matInstance.GetColor(propertyID);
     }
 
-    private void OnEnable()
-    {
+    private void OnEnable() {
         startTime = Time.time;
         canUpdate = true;
     }
 
-    private void Update()
-    {
+    private void Update() {
         var time = Time.time - startTime;
         if (canUpdate) {
             var eval = Color.Evaluate(time / TimeMultiplier);

@@ -1,10 +1,8 @@
 using UnityEngine;
 
-namespace Cinemachine.Utility
-{
+namespace Cinemachine.Utility {
     /// <summary>Extensions to the Vector3 class, used by Cinemachine</summary>
-    public static class UnityVectorExtensions
-    {
+    public static class UnityVectorExtensions {
         /// <summary>A useful Epsilon</summary>
         public const float Epsilon = 0.0001f;
 
@@ -15,8 +13,7 @@ namespace Cinemachine.Utility
         /// <param name="s0">Start of line segment</param>
         /// <param name="s1">End of line segment</param>
         /// <returns>The interpolation parameter representing the point on the segment, with 0==s0, and 1==s1</returns>
-        public static float ClosestPointOnSegment(this Vector3 p, Vector3 s0, Vector3 s1)
-        {
+        public static float ClosestPointOnSegment(this Vector3 p, Vector3 s0, Vector3 s1) {
             Vector3 s = s1 - s0;
             float len2 = Vector3.SqrMagnitude(s);
             if (len2 < Epsilon)
@@ -31,8 +28,7 @@ namespace Cinemachine.Utility
         /// <param name="s0">Start of line segment</param>
         /// <param name="s1">End of line segment</param>
         /// <returns>The interpolation parameter representing the point on the segment, with 0==s0, and 1==s1</returns>
-        public static float ClosestPointOnSegment(this Vector2 p, Vector2 s0, Vector2 s1)
-        {
+        public static float ClosestPointOnSegment(this Vector2 p, Vector2 s0, Vector2 s1) {
             Vector2 s = s1 - s0;
             float len2 = Vector2.SqrMagnitude(s);
             if (len2 < Epsilon)
@@ -47,16 +43,14 @@ namespace Cinemachine.Utility
         /// <param name="vector"></param>
         /// <param name="planeNormal">The normal that defines the plane.  Cannot be zero-length.</param>
         /// <returns>The component of the vector that lies in the plane</returns>
-        public static Vector3 ProjectOntoPlane(this Vector3 vector, Vector3 planeNormal)
-        {
+        public static Vector3 ProjectOntoPlane(this Vector3 vector, Vector3 planeNormal) {
             return (vector - Vector3.Dot(vector, planeNormal) * planeNormal);
         }
 
         /// <summary>Is the vector within Epsilon of zero length?</summary>
         /// <param name="v"></param>
         /// <returns>True if the square magnitude of the vector is within Epsilon of zero</returns>
-        public static bool AlmostZero(this Vector3 v)
-        {
+        public static bool AlmostZero(this Vector3 v) {
             return v.sqrMagnitude < (Epsilon * Epsilon);
         }
 
@@ -68,8 +62,7 @@ namespace Cinemachine.Utility
         /// Y unit vector, or indeed any vector which, when dotted with Y unit vector,
         /// would give a positive result.</param>
         /// <returns>The signed angle between the vectors</returns>
-        public static float SignedAngle(Vector3 from, Vector3 to, Vector3 refNormal)
-        {
+        public static float SignedAngle(Vector3 from, Vector3 to, Vector3 refNormal) {
             from.Normalize();
             to.Normalize();
             float dot = Vector3.Dot(Vector3.Cross(from, to), refNormal);
@@ -89,8 +82,7 @@ namespace Cinemachine.Utility
         /// <param name="t">Interpolation amoun t</param>
         /// <param name="up">Defines the up direction</param>
         public static Vector3 SlerpWithReferenceUp(
-            Vector3 vA, Vector3 vB, float t, Vector3 up)
-        {
+            Vector3 vA, Vector3 vB, float t, Vector3 up) {
             float dA = vA.magnitude;
             float dB = vB.magnitude;
             if (dA < Epsilon || dB < Epsilon)
@@ -107,8 +99,7 @@ namespace Cinemachine.Utility
     }
 
     /// <summary>Extentions to the Quaternion class, usen in various places by Cinemachine</summary>
-    public static class UnityQuaternionExtensions
-    {
+    public static class UnityQuaternionExtensions {
         /// <summary>This is a slerp that mimics a camera operator's movement in that
         /// it chooses a path that avoids the lower hemisphere, as defined by
         /// the up param</summary>
@@ -117,8 +108,7 @@ namespace Cinemachine.Utility
         /// <param name="t">Interpolation amoun t</param>
         /// <param name="up">Defines the up direction</param>
         public static Quaternion SlerpWithReferenceUp(
-            Quaternion qA, Quaternion qB, float t, Vector3 up)
-        {
+            Quaternion qA, Quaternion qB, float t, Vector3 up) {
             Vector3 dirA = (qA * Vector3.forward).ProjectOntoPlane(up);
             Vector3 dirB = (qB * Vector3.forward).ProjectOntoPlane(up);
             if (dirA.AlmostZero() || dirB.AlmostZero())
@@ -139,8 +129,7 @@ namespace Cinemachine.Utility
         /// <summary>Normalize a quaternion</summary>
         /// <param name="q"></param>
         /// <returns>The normalized quaternion.  Unit length is 1.</returns>
-        public static Quaternion Normalized(this Quaternion q)
-        {
+        public static Quaternion Normalized(this Quaternion q) {
             Vector4 v = new Vector4(q.x, q.y, q.z, q.w).normalized;
             return new Quaternion(v.x, v.y, v.z, v.w);
         }
@@ -157,8 +146,7 @@ namespace Cinemachine.Utility
         /// <returns>Vector2.y is rotation about worldUp, and Vector2.x is second rotation,
         /// about local right.</returns>
         public static Vector2 GetCameraRotationToTarget(
-            this Quaternion orient, Vector3 lookAtDir, Vector3 worldUp)
-        {
+            this Quaternion orient, Vector3 lookAtDir, Vector3 worldUp) {
             if (lookAtDir.AlmostZero())
                 return Vector2.zero;  // degenerate
 
@@ -171,11 +159,9 @@ namespace Cinemachine.Utility
             float angleH = 0;
             {
                 Vector3 targetDirH = lookAtDir.ProjectOntoPlane(up);
-                if (!targetDirH.AlmostZero())
-                {
+                if (!targetDirH.AlmostZero()) {
                     Vector3 currentDirH = Vector3.forward.ProjectOntoPlane(up);
-                    if (currentDirH.AlmostZero())
-                    {
+                    if (currentDirH.AlmostZero()) {
                         // We're looking at the north or south pole
                         if (Vector3.Dot(currentDirH, up) > 0)
                             currentDirH = Vector3.down.ProjectOntoPlane(up);
@@ -203,23 +189,20 @@ namespace Cinemachine.Utility
         /// about local right.</param>
         /// <param name="worldUp">Which way is up</param>
         public static Quaternion ApplyCameraRotation(
-            this Quaternion orient, Vector2 rot, Vector3 worldUp)
-        {
+            this Quaternion orient, Vector2 rot, Vector3 worldUp) {
             Quaternion q = Quaternion.AngleAxis(rot.x, Vector3.right);
             return (Quaternion.AngleAxis(rot.y, worldUp) * orient) * q;
         }
     }
 
     /// <summary>Ad-hoc xxtentions to the Rect structure, used by Cinemachine</summary>
-    public static class UnityRectExtensions
-    {
+    public static class UnityRectExtensions {
         /// <summary>Inflate a rect</summary>
         /// <param name="r"></param>
         /// <param name="delta">x and y are added/subtracted fto/from the edges of
         /// the rect, inflating it in all directions</param>
         /// <returns>The inflated rect</returns>
-        public static Rect Inflated(this Rect r, Vector2 delta)
-        {
+        public static Rect Inflated(this Rect r, Vector2 delta) {
             return new Rect(
                 r.xMin - delta.x, r.yMin - delta.y,
                 r.width + delta.x * 2, r.height + delta.y * 2);

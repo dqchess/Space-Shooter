@@ -1,9 +1,8 @@
-﻿using UnityEngine;
+﻿using Cinemachine.Utility;
 using System;
-using Cinemachine.Utility;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a CinemachineComponent in the Aim section of the component pipeline.
     /// Its job is to aim the camera at the vcam's LookAt target object, with 
@@ -18,8 +17,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineComposer : CinemachineComponentBase
-    {
+    public class CinemachineComposer : CinemachineComponentBase {
         /// <summary>Used by the Inspector Editor to display on-screen guides.</summary>
         [NoSaveDuringPlay, HideInInspector]
         public Action OnGUICallback = null;
@@ -120,8 +118,7 @@ namespace Cinemachine
         /// Also set the TrackedPoint property, taking lookahead into account.</summary>
         /// <param name="lookAt">The unoffset LookAt point</param>
         /// <returns>The LookAt point with the offset applied</returns>
-        protected virtual Vector3 GetLookAtPointAndSetTrackedPoint(Vector3 lookAt)
-        {
+        protected virtual Vector3 GetLookAtPointAndSetTrackedPoint(Vector3 lookAt) {
             Vector3 pos = lookAt;
             if (LookAtTarget != null)
                 pos += LookAtTarget.transform.rotation * m_TrackedObjectOffset;
@@ -133,7 +130,7 @@ namespace Cinemachine
 
             return pos;
         }
-        
+
 #if UNITY_EDITOR
         private void OnGUI() { if (OnGUICallback != null) OnGUICallback(); }
 #endif
@@ -145,8 +142,7 @@ namespace Cinemachine
         Quaternion m_CameraOrientationPrevFrame = Quaternion.identity;
         PositionPredictor m_Predictor = new PositionPredictor();
 
-        public override void PrePipelineMutateCameraState(ref CameraState curState) 
-        {
+        public override void PrePipelineMutateCameraState(ref CameraState curState) {
             if (IsValid && curState.HasLookAt)
                 curState.ReferenceLookAt = GetLookAtPointAndSetTrackedPoint(curState.ReferenceLookAt);
         }
@@ -155,18 +151,16 @@ namespace Cinemachine
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for calculating damping.  If less than
         /// zero, then target will snap to the center of the dead zone.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             // Initialize the state for previous frame if appropriate
             if (deltaTime < 0)
                 m_Predictor.Reset();
-                
+
             if (!IsValid || !curState.HasLookAt)
                 return;
 
             float targetDistance = (TrackedPoint - curState.CorrectedPosition).magnitude;
-            if (targetDistance < Epsilon)
-            {
+            if (targetDistance < Epsilon) {
                 if (deltaTime >= 0)
                     curState.RawOrientation = m_CameraOrientationPrevFrame;
                 return;  // navel-gazing, get outa here
@@ -174,15 +168,12 @@ namespace Cinemachine
 
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachineComposer.MutateCameraState");
             float fov, fovH;
-            if (curState.Lens.Orthographic)
-            {
+            if (curState.Lens.Orthographic) {
                 // Calculate effective fov - fake it for ortho based on target distance
                 fov = Mathf.Rad2Deg * 2 * Mathf.Atan(curState.Lens.OrthographicSize / targetDistance);
                 fovH = Mathf.Rad2Deg * 2 * Mathf.Atan(
                     curState.Lens.Aspect * curState.Lens.OrthographicSize / targetDistance);
-            }
-            else 
-            {
+            } else {
                 fov = curState.Lens.FieldOfView;
                 double radHFOV = 2 * Math.Atan(Math.Tan(fov * Mathf.Deg2Rad / 2) * curState.Lens.Aspect);
                 fovH = (float)(Mathf.Rad2Deg * radHFOV);
@@ -190,21 +181,17 @@ namespace Cinemachine
 
             Quaternion rigOrientation = curState.RawOrientation;
             Rect softGuideFOV = ScreenToFOV(SoftGuideRect, fov, fovH, curState.Lens.Aspect);
-            if (deltaTime < 0)
-            {
+            if (deltaTime < 0) {
                 // No damping, just snap to central bounds, skipping the soft zone
                 Rect rect = new Rect(softGuideFOV.center, Vector2.zero); // Force to center
                 RotateToScreenBounds(ref curState, rect, ref rigOrientation, fov, fovH, -1);
-            }
-            else
-            {
+            } else {
                 // Start with previous frame's orientation (but with current up)
                 Vector3 dir = m_LookAtPrevFrame - (m_CameraPosPrevFrame + curState.PositionDampingBypass);
-                if (dir.AlmostZero())  
+                if (dir.AlmostZero())
                     rigOrientation = Quaternion.LookRotation(
                         m_CameraOrientationPrevFrame * Vector3.forward, curState.ReferenceUp);
-                else 
-                {
+                else {
                     rigOrientation = Quaternion.LookRotation(dir, curState.ReferenceUp);
                     rigOrientation = rigOrientation.ApplyCameraRotation(
                         -m_ScreenOffsetPrevFrame, curState.ReferenceUp);
@@ -227,16 +214,13 @@ namespace Cinemachine
         }
 
         /// <summary>Internal API for the inspector editor</summary>
-        public Rect SoftGuideRect
-        {
-            get
-            {
+        public Rect SoftGuideRect {
+            get {
                 return new Rect(
                     m_ScreenX - m_DeadZoneWidth / 2, m_ScreenY - m_DeadZoneHeight / 2,
                     m_DeadZoneWidth, m_DeadZoneHeight);
             }
-            set
-            {
+            set {
                 m_DeadZoneWidth = Mathf.Clamp01(value.width);
                 m_DeadZoneHeight = Mathf.Clamp01(value.height);
                 m_ScreenX = Mathf.Clamp01(value.x + m_DeadZoneWidth / 2);
@@ -247,10 +231,8 @@ namespace Cinemachine
         }
 
         /// <summary>Internal API for the inspector editor</summary>
-        public Rect HardGuideRect
-        {
-            get
-            {
+        public Rect HardGuideRect {
+            get {
                 Rect r = new Rect(
                         m_ScreenX - m_SoftZoneWidth / 2, m_ScreenY - m_SoftZoneHeight / 2,
                         m_SoftZoneWidth, m_SoftZoneHeight);
@@ -259,8 +241,7 @@ namespace Cinemachine
                         m_BiasY * (m_SoftZoneHeight - m_DeadZoneHeight));
                 return r;
             }
-            set
-            {
+            set {
                 m_SoftZoneWidth = Mathf.Clamp(value.width, 0, 2f);
                 m_SoftZoneHeight = Mathf.Clamp(value.height, 0, 2f);
                 m_DeadZoneWidth = Mathf.Min(m_DeadZoneWidth, m_SoftZoneWidth);
@@ -274,10 +255,9 @@ namespace Cinemachine
                 m_BiasY = biasHeight < Epsilon ? 0 : Mathf.Clamp(bias.y / biasHeight, -0.5f, 0.5f);
             }
         }
-        
+
         // Convert from screen coords to normalized FOV angular coords
-        private Rect ScreenToFOV(Rect rScreen, float fov, float fovH, float aspect)
-        {
+        private Rect ScreenToFOV(Rect rScreen, float fov, float fovH, float aspect) {
             Rect r = new Rect(rScreen);
             Matrix4x4 persp = Matrix4x4.Perspective(fov, aspect, 0.01f, 10000f).inverse;
 
@@ -289,11 +269,11 @@ namespace Cinemachine
             angle = UnityVectorExtensions.SignedAngle(Vector3.forward, p, Vector3.left);
             r.yMax = ((fov / 2) + angle) / fov;
 
-            p = persp.MultiplyPoint(new Vector3((r.xMin * 2f) - 1f, 0, 0.1f));  p.z = -p.z;
+            p = persp.MultiplyPoint(new Vector3((r.xMin * 2f) - 1f, 0, 0.1f)); p.z = -p.z;
             angle = UnityVectorExtensions.SignedAngle(Vector3.forward, p, Vector3.up);
             r.xMin = ((fovH / 2) + angle) / fovH;
 
-            p = persp.MultiplyPoint(new Vector3((r.xMax * 2f) - 1f, 0, 0.1f));  p.z = -p.z;
+            p = persp.MultiplyPoint(new Vector3((r.xMax * 2f) - 1f, 0, 0.1f)); p.z = -p.z;
             angle = UnityVectorExtensions.SignedAngle(Vector3.forward, p, Vector3.up);
             r.xMax = ((fovH / 2) + angle) / fovH;
             return r;
@@ -309,8 +289,7 @@ namespace Cinemachine
         /// </summary>
         private bool RotateToScreenBounds(
             ref CameraState state, Rect screenRect,
-            ref Quaternion rigOrientation, float fov, float fovH, float deltaTime)
-        {
+            ref Quaternion rigOrientation, float fov, float fovH, float deltaTime) {
             Vector3 targetDir = TrackedPoint - state.CorrectedPosition;
             Vector2 rotToRect = rigOrientation.GetCameraRotationToTarget(targetDir, state.ReferenceUp);
 
@@ -335,8 +314,7 @@ namespace Cinemachine
                 rotToRect.y = 0;
 
             // Apply damping
-            if (deltaTime >= 0)
-            {
+            if (deltaTime >= 0) {
                 rotToRect.x = Damper.Damp(rotToRect.x, m_VerticalDamping, deltaTime);
                 rotToRect.y = Damper.Damp(rotToRect.y, m_HorizontalDamping, deltaTime);
             }
@@ -349,7 +327,7 @@ namespace Cinemachine
             // that it would be damped
             return Mathf.Abs(rotToRect.x) > Epsilon || Mathf.Abs(rotToRect.y) > Epsilon;
 #else
-            return false; 
+            return false;
 #endif
         }
 
@@ -359,27 +337,22 @@ namespace Cinemachine
         /// beyond the vertical in order to produce the desired framing.  We prevent this by
         /// clamping the composer's vertical settings so that this situation can't happen.
         /// </summary>
-        private bool ClampVerticalBounds(ref Rect r, Vector3 dir, Vector3 up, float fov)
-        {
+        private bool ClampVerticalBounds(ref Rect r, Vector3 dir, Vector3 up, float fov) {
             float angle = Vector3.Angle(dir, up);
             float halfFov = (fov / 2f) + 1; // give it a little extra to accommodate precision errors
-            if (angle < halfFov)
-            {
+            if (angle < halfFov) {
                 // looking up
                 float maxY = 1f - (halfFov - angle) / fov;
-                if (r.yMax > maxY)
-                {
+                if (r.yMax > maxY) {
                     r.yMin = Mathf.Min(r.yMin, maxY);
                     r.yMax = Mathf.Min(r.yMax, maxY);
                     return true;
                 }
             }
-            if (angle > (180 - halfFov))
-            {
+            if (angle > (180 - halfFov)) {
                 // looking down
                 float minY = (angle - (180 - halfFov)) / fov;
-                if (minY > r.yMin)
-                {
+                if (minY > r.yMin) {
                     r.yMin = Mathf.Max(r.yMin, minY);
                     r.yMax = Mathf.Max(r.yMax, minY);
                     return true;

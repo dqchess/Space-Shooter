@@ -1,16 +1,14 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// Describes the FOV and clip planes for a camera.  This generally mirrors the Unity Camera's 
     /// lens settings, and will be used to drive the Unity camera when the vcam is active.
     /// </summary>
     [Serializable]
     [DocumentationSorting(2, DocumentationSortingAttribute.Level.UserRef)]
-    public struct LensSettings
-    {
+    public struct LensSettings {
         /// <summary>Default Lens Settings</summary>
         public static LensSettings Default = new LensSettings(40f, 10, 0.1f, 5000f, 0, false, 1);
 
@@ -66,11 +64,9 @@ namespace Cinemachine
         /// </summary>
         /// <param name="fromCamera">The Camera from which the FoV, near 
         /// and far clip planes will be copied.</param>
-	    public static LensSettings FromCamera(Camera fromCamera)
-        {
+	    public static LensSettings FromCamera(Camera fromCamera) {
             LensSettings lens = Default;
-            if (fromCamera != null)
-            {
+            if (fromCamera != null) {
                 lens.FieldOfView = fromCamera.fieldOfView;
                 lens.OrthographicSize = fromCamera.orthographicSize;
                 lens.NearClipPlane = fromCamera.nearClipPlane;
@@ -95,8 +91,7 @@ namespace Cinemachine
         public LensSettings(
             float fov, float orthographicSize,
             float nearClip, float farClip, float dutch,
-            bool ortho, float aspect) : this()
-        {
+            bool ortho, float aspect) : this() {
             FieldOfView = fov;
             OrthographicSize = orthographicSize;
             NearClipPlane = nearClip;
@@ -113,8 +108,7 @@ namespace Cinemachine
         /// <param name="lensB">The LensSettings to blend to</param>
         /// <param name="t">The interpolation value. Internally clamped to the range [0,1]</param>
         /// <returns>Interpolated settings</returns>
-        public static LensSettings Lerp(LensSettings lensA, LensSettings lensB, float t)
-        {
+        public static LensSettings Lerp(LensSettings lensA, LensSettings lensB, float t) {
             t = Mathf.Clamp01(t);
             LensSettings blendedLens = new LensSettings();
             blendedLens.FarClipPlane = Mathf.Lerp(lensA.FarClipPlane, lensB.FarClipPlane, t);
@@ -128,8 +122,7 @@ namespace Cinemachine
         }
 
         /// <summary>Make sure lens settings are sane.  Call this from OnValidate().</summary>
-        public void Validate()
-        {
+        public void Validate() {
             NearClipPlane = Mathf.Max(NearClipPlane, 0.01f);
             FarClipPlane = Mathf.Max(FarClipPlane, NearClipPlane + 0.01f);
         }

@@ -1,9 +1,7 @@
 ﻿using UnityEngine;
-using System.Collections;
 using UnityEngine.UI;
 
-public class SciFiBeamScript : MonoBehaviour
-{
+public class SciFiBeamScript : MonoBehaviour {
 
     [Header("Prefabs")]
     public GameObject[] beamLineRendererPrefab;
@@ -30,8 +28,7 @@ public class SciFiBeamScript : MonoBehaviour
     public Text textBeamName;
 
     // Use this for initialization
-    void Start()
-    {
+    void Start() {
         if (textBeamName)
             textBeamName.text = beamLineRendererPrefab[currentBeam].name;
         if (endOffSetSlider)
@@ -41,31 +38,26 @@ public class SciFiBeamScript : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update() {
         if (Input.GetKeyDown(KeyCode.Escape))
             Application.Quit();
 
-        if (Input.GetMouseButtonDown(0))
-        {
+        if (Input.GetMouseButtonDown(0)) {
             beamStart = Instantiate(beamStartPrefab[currentBeam], new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
             beamEnd = Instantiate(beamEndPrefab[currentBeam], new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
             beam = Instantiate(beamLineRendererPrefab[currentBeam], new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
             line = beam.GetComponent<LineRenderer>();
         }
-        if (Input.GetMouseButtonUp(0))
-        {
+        if (Input.GetMouseButtonUp(0)) {
             Destroy(beamStart);
             Destroy(beamEnd);
             Destroy(beam);
         }
 
-        if (Input.GetMouseButton(0))
-        {
+        if (Input.GetMouseButton(0)) {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray.origin, ray.direction, out hit))
-            {
+            if (Physics.Raycast(ray.origin, ray.direction, out hit)) {
                 Vector3 tdir = hit.point - transform.position;
                 ShootBeamInDir(transform.position, tdir);
             }
@@ -76,17 +68,13 @@ public class SciFiBeamScript : MonoBehaviour
             nextBeam();
         }
 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
+        if (Input.GetKeyDown(KeyCode.D)) {
             nextBeam();
         }
 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
+        if (Input.GetKeyDown(KeyCode.A)) {
             previousBeam();
-        }
-        else if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
+        } else if (Input.GetKeyDown(KeyCode.LeftArrow)) {
             previousBeam();
         }
 
@@ -115,18 +103,15 @@ public class SciFiBeamScript : MonoBehaviour
     }
 
 
-    public void UpdateEndOffset()
-    {
+    public void UpdateEndOffset() {
         beamEndOffset = endOffSetSlider.value;
     }
 
-    public void UpdateScrollSpeed()
-    {
+    public void UpdateScrollSpeed() {
         textureScrollSpeed = scrollSpeedSlider.value;
     }
 
-    void ShootBeamInDir(Vector3 start, Vector3 dir)
-    {
+    void ShootBeamInDir(Vector3 start, Vector3 dir) {
         line.SetVertexCount(2);
         line.SetPosition(0, start);
         beamStart.transform.position = start;

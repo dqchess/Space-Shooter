@@ -1,23 +1,20 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// Asset that defines the rules for blending between Virtual Cameras.
     /// </summary>
     [DocumentationSorting(10, DocumentationSortingAttribute.Level.UserRef)]
     [Serializable]
-    public sealed class CinemachineBlenderSettings : ScriptableObject
-    {
+    public sealed class CinemachineBlenderSettings : ScriptableObject {
         /// <summary>
         /// Container specifying how two specific Cinemachine Virtual Cameras
         /// blend together.
         /// </summary>
         [DocumentationSorting(10.1f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct CustomBlend
-        {
+        public struct CustomBlend {
             [Tooltip("When blending from this camera")]
             public string m_From;
 
@@ -45,36 +42,27 @@ namespace Cinemachine
         /// <param name="defaultCurve">Curve to return if no curve found.  Can be NULL.</param>
         /// <returns></returns>
         public AnimationCurve GetBlendCurveForVirtualCameras(
-            string fromCameraName, string toCameraName, AnimationCurve defaultCurve)
-        {
+            string fromCameraName, string toCameraName, AnimationCurve defaultCurve) {
             AnimationCurve anyToMe = null;
             AnimationCurve meToAny = null;
-            if (m_CustomBlends != null)
-            {
-                for (int i = 0; i < m_CustomBlends.Length; ++i)
-                {
+            if (m_CustomBlends != null) {
+                for (int i = 0; i < m_CustomBlends.Length; ++i) {
                     // Attempt to find direct name first
                     CustomBlend blendParams = m_CustomBlends[i];
                     if ((blendParams.m_From == fromCameraName)
-                        && (blendParams.m_To == toCameraName))
-                    {
+                        && (blendParams.m_To == toCameraName)) {
                         return blendParams.m_Blend.BlendCurve;
                     }
                     // If we come across default applicable wildcards, remember them
-                    if (blendParams.m_From == kBlendFromAnyCameraLabel)
-                    {
+                    if (blendParams.m_From == kBlendFromAnyCameraLabel) {
                         if (!string.IsNullOrEmpty(toCameraName)
-                            && blendParams.m_To == toCameraName)
-                        {
+                            && blendParams.m_To == toCameraName) {
                             anyToMe = blendParams.m_Blend.BlendCurve;
-                        }
-                        else if (blendParams.m_To == kBlendFromAnyCameraLabel)
+                        } else if (blendParams.m_To == kBlendFromAnyCameraLabel)
                             defaultCurve = blendParams.m_Blend.BlendCurve;
-                    }
-                    else if (blendParams.m_To == kBlendFromAnyCameraLabel
-                             && !string.IsNullOrEmpty(fromCameraName)
-                             && blendParams.m_From == fromCameraName)
-                    {
+                    } else if (blendParams.m_To == kBlendFromAnyCameraLabel
+                               && !string.IsNullOrEmpty(fromCameraName)
+                               && blendParams.m_From == fromCameraName) {
                         meToAny = blendParams.m_Blend.BlendCurve;
                     }
                 }

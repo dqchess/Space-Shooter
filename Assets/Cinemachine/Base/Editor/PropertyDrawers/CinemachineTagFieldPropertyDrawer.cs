@@ -1,13 +1,10 @@
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomPropertyDrawer(typeof(TagFieldAttribute))]
-    public sealed  class CinemachineTagFieldPropertyDrawer : PropertyDrawer
-    {
-        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
-        {
+    public sealed class CinemachineTagFieldPropertyDrawer : PropertyDrawer {
+        public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label) {
             const float hSpace = 2;
             GUIContent clearText = new GUIContent("Clear", "Set the tag to empty");
             var textDimensions = GUI.skin.button.CalcSize(clearText);

@@ -1,29 +1,24 @@
-using UnityEditor;
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEditorInternal;
+using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineSmoothPath))]
-    internal sealed class CinemachineSmoothPathEditor : BaseEditor<CinemachineSmoothPath>
-    {
+    internal sealed class CinemachineSmoothPathEditor : BaseEditor<CinemachineSmoothPath> {
         private ReorderableList mWaypointList;
 
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
             excluded.Add(FieldPath(x => x.m_Waypoints));
             return excluded;
         }
 
-        void OnEnable()
-        {
+        void OnEnable() {
             mWaypointList = null;
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             BeginInspector();
             if (mWaypointList == null)
                 SetupWaypointList();
@@ -41,25 +36,20 @@ namespace Cinemachine.Editor
                 serializedObject.ApplyModifiedProperties();
         }
 
-        void SetupWaypointList()
-        {
+        void SetupWaypointList() {
             mWaypointList = new ReorderableList(
                     serializedObject, FindProperty(x => x.m_Waypoints),
                     true, true, true, true);
 
-            mWaypointList.drawHeaderCallback = (Rect rect) =>
-                { EditorGUI.LabelField(rect, "Waypoints"); };
+            mWaypointList.drawHeaderCallback = (Rect rect) => { EditorGUI.LabelField(rect, "Waypoints"); };
 
             mWaypointList.drawElementCallback
-                = (Rect rect, int index, bool isActive, bool isFocused) =>
-                { DrawWaypointEditor(rect, index); };
+                = (Rect rect, int index, bool isActive, bool isFocused) => { DrawWaypointEditor(rect, index); };
 
-            mWaypointList.onAddCallback = (ReorderableList l) =>
-                { InsertWaypointAtIndex(l.index); };
+            mWaypointList.onAddCallback = (ReorderableList l) => { InsertWaypointAtIndex(l.index); };
         }
 
-        void DrawWaypointEditor(Rect rect, int index)
-        {
+        void DrawWaypointEditor(Rect rect, int index) {
             // Needed for accessing string names of fields
             CinemachineSmoothPath.Waypoint def = new CinemachineSmoothPath.Waypoint();
             SerializedProperty element = mWaypointList.serializedProperty.GetArrayElementAtIndex(index);
@@ -68,8 +58,7 @@ namespace Cinemachine.Editor
             rect.width -= hSpace; rect.y += 1;
             Vector2 numberDimension = GUI.skin.label.CalcSize(new GUIContent("999"));
             Rect r = new Rect(rect.position, numberDimension);
-            if (GUI.Button(r, new GUIContent(index.ToString(), "Go to the waypoint in the scene view")))
-            {
+            if (GUI.Button(r, new GUIContent(index.ToString(), "Go to the waypoint in the scene view"))) {
                 mWaypointList.index = index;
                 SceneView.lastActiveSceneView.pivot = Target.EvaluatePosition(index);
                 SceneView.lastActiveSceneView.size = 4;
@@ -89,11 +78,10 @@ namespace Cinemachine.Editor
             EditorGUI.PropertyField(r, element.FindPropertyRelative(() => def.roll), rollLabel);
             EditorGUIUtility.labelWidth = oldWidth;
 
-            r.x += r.width + hSpace; r.height += 1; r.width = r.height; 
+            r.x += r.width + hSpace; r.height += 1; r.width = r.height;
             GUIContent setButtonContent = EditorGUIUtility.IconContent("d_RectTransform Icon");
             setButtonContent.tooltip = "Set to scene-view camera position";
-            if (GUI.Button(r, setButtonContent, GUI.skin.label))
-            {
+            if (GUI.Button(r, setButtonContent, GUI.skin.label)) {
                 Undo.RecordObject(Target, "Set waypoint");
                 CinemachineSmoothPath.Waypoint wp = Target.m_Waypoints[index];
                 Vector3 pos = SceneView.lastActiveSceneView.camera.transform.position;
@@ -102,8 +90,7 @@ namespace Cinemachine.Editor
             }
         }
 
-        void InsertWaypointAtIndex(int indexA)
-        {
+        void InsertWaypointAtIndex(int indexA) {
             Vector3 pos = Vector3.right;
             float roll = 0;
 
@@ -111,21 +98,17 @@ namespace Cinemachine.Editor
             int numWaypoints = Target.m_Waypoints.Length;
             if (indexA < 0)
                 indexA = numWaypoints - 1;
-            if (indexA >= 0)
-            {
+            if (indexA >= 0) {
                 int indexB = indexA + 1;
                 if (Target.m_Looped && indexB >= numWaypoints)
                     indexB = 0;
-                if (indexB >= numWaypoints)
-                {
+                if (indexB >= numWaypoints) {
                     Vector3 delta = Vector3.right;
                     if (indexA > 0)
-                        delta = Target.m_Waypoints[indexA].position - Target.m_Waypoints[indexA-1].position;
+                        delta = Target.m_Waypoints[indexA].position - Target.m_Waypoints[indexA - 1].position;
                     pos = Target.m_Waypoints[indexA].position + delta;
                     roll = Target.m_Waypoints[indexA].roll;
-                }
-                else
-                {
+                } else {
                     // Interpolate
                     pos = Target.transform.InverseTransformPoint(Target.EvaluatePosition(0.5f + indexA));
                     roll = Mathf.Lerp(Target.m_Waypoints[indexA].roll, Target.m_Waypoints[indexB].roll, 0.5f);
@@ -142,19 +125,16 @@ namespace Cinemachine.Editor
             mWaypointList.index = indexA + 1; // select it
         }
 
-        void OnSceneGUI()
-        {
+        void OnSceneGUI() {
             if (mWaypointList == null)
                 SetupWaypointList();
 
-            if (Tools.current == Tool.Move)
-            {
+            if (Tools.current == Tool.Move) {
                 Matrix4x4 mOld = Handles.matrix;
                 Color colorOld = Handles.color;
 
                 Handles.matrix = Target.transform.localToWorldMatrix;
-                for (int i = 0; i < Target.m_Waypoints.Length; ++i)
-                {
+                for (int i = 0; i < Target.m_Waypoints.Length; ++i) {
                     DrawSelectionHandle(i);
                     if (mWaypointList.index == i)
                         DrawPositionControl(i); // Waypoint is selected
@@ -164,16 +144,13 @@ namespace Cinemachine.Editor
             }
         }
 
-        void DrawSelectionHandle(int i)
-        {
-            if (Event.current.button != 1)
-            {
+        void DrawSelectionHandle(int i) {
+            if (Event.current.button != 1) {
                 Vector3 pos = Target.m_Waypoints[i].position;
                 float size = HandleUtility.GetHandleSize(pos) * 0.2f;
                 Handles.color = Color.white;
                 if (Handles.Button(pos, Quaternion.identity, size, size, Handles.SphereHandleCap)
-                    && mWaypointList.index != i)
-                {
+                    && mWaypointList.index != i) {
                     mWaypointList.index = i;
                     InternalEditorUtility.RepaintAllViews();
                 }
@@ -194,8 +171,7 @@ namespace Cinemachine.Editor
             }
         }
 
-        void DrawPositionControl(int i)
-        {
+        void DrawPositionControl(int i) {
             CinemachineSmoothPath.Waypoint wp = Target.m_Waypoints[i];
             EditorGUI.BeginChangeCheck();
             Handles.color = Target.m_Appearance.pathColor;
@@ -204,8 +180,7 @@ namespace Cinemachine.Editor
             float size = HandleUtility.GetHandleSize(wp.position) * 0.1f;
             Handles.SphereHandleCap(0, wp.position, rotation, size, EventType.Repaint);
             Vector3 pos = Handles.PositionHandle(wp.position, rotation);
-            if (EditorGUI.EndChangeCheck())
-            {
+            if (EditorGUI.EndChangeCheck()) {
                 Undo.RecordObject(target, "Move Waypoint");
                 wp.position = pos;
                 Target.m_Waypoints[i] = wp;
@@ -215,9 +190,8 @@ namespace Cinemachine.Editor
 
         [DrawGizmo(GizmoType.Active | GizmoType.NotInSelectionHierarchy
              | GizmoType.InSelectionHierarchy | GizmoType.Pickable, typeof(CinemachineSmoothPath))]
-        static void DrawGizmos(CinemachineSmoothPath path, GizmoType selectionType)
-        {
-            CinemachinePathEditor.DrawPathGizmo(path, 
+        static void DrawGizmos(CinemachineSmoothPath path, GizmoType selectionType) {
+            CinemachinePathEditor.DrawPathGizmo(path,
                 (Selection.activeGameObject == path.gameObject)
                 ? path.m_Appearance.pathColor : path.m_Appearance.inactivePathColor);
         }

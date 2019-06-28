@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a CinemachineComponent in the Aim section of the component pipeline.
     /// Its job is to aim the camera in response to the user's mouse or joystick input.
@@ -14,8 +13,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachinePOV : CinemachineComponentBase
-    {
+    public class CinemachinePOV : CinemachineComponentBase {
         /// <summary>The Vertical axis.  Value is -90..90. Controls the vertical orientation</summary>
         [Tooltip("The Vertical axis.  Value is -90..90. Controls the vertical orientation")]
         public AxisState m_VerticalAxis = new AxisState(300f, 0.1f, 0.1f, 0f, "Mouse Y", true);
@@ -31,31 +29,27 @@ namespace Cinemachine
         /// Always returns the Aim stage</summary>
         public override CinemachineCore.Stage Stage { get { return CinemachineCore.Stage.Aim; } }
 
-        private void OnValidate()
-        {
+        private void OnValidate() {
             m_HorizontalAxis.Validate();
             m_VerticalAxis.Validate();
         }
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             m_HorizontalAxis.SetThresholds(-180f, 180f, true);
             m_VerticalAxis.SetThresholds(-90, 90, false);
         }
-        
+
         /// <summary>Applies the axis values and orients the camera accordingly</summary>
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for calculating damping.  Not used.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             if (!IsValid)
                 return;
 
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachinePOV.MutateCameraState");
 
             // Only read joystick when game is playing
-            if (deltaTime >= 0 || CinemachineCore.Instance.IsLive(VirtualCamera))
-            {
+            if (deltaTime >= 0 || CinemachineCore.Instance.IsLive(VirtualCamera)) {
                 m_HorizontalAxis.Update(deltaTime);
                 m_VerticalAxis.Update(deltaTime);
             }

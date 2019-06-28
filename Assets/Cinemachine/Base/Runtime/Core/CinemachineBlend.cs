@@ -1,14 +1,12 @@
 using System;
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// Describes a blend between 2 Cinemachine Virtual Cameras, and holds the
     /// current state of the blend.
     /// </summary>
-    public class CinemachineBlend
-    {
+    public class CinemachineBlend {
         /// <summary>First camera in the blend</summary>
         public ICinemachineCamera CamA { get; set; }
 
@@ -26,14 +24,12 @@ namespace Cinemachine
         /// <summary>The current weight of the blend.  This is an evaluation of the
         /// BlendCurve at the current time relative to the start of the blend.
         /// 0 means camA, 1 means camB.</summary>
-        public float BlendWeight
-        { 
-            get { return BlendCurve != null ? BlendCurve.Evaluate(TimeInBlend) : 0; } 
+        public float BlendWeight {
+            get { return BlendCurve != null ? BlendCurve.Evaluate(TimeInBlend) : 0; }
         }
 
         /// <summary>Validity test for the blend.  True if both cameras are defined.</summary>
-        public bool IsValid
-        {
+        public bool IsValid {
             get { return (CamA != null || CamB != null); }
         }
 
@@ -46,11 +42,9 @@ namespace Cinemachine
         public bool IsComplete { get { return TimeInBlend >= Duration; } }
 
         /// <summary>Text description of the blend, for debugging</summary>
-        public string Description
-        {
-            get
-            {
-                string fromName = (CamA != null) ? "[" + CamA.Name + "]": "(none)";
+        public string Description {
+            get {
+                string fromName = (CamA != null) ? "[" + CamA.Name + "]" : "(none)";
                 string toName = (CamB != null) ? "[" + CamB.Name + "]" : "(none)";
                 int percent = (int)(BlendWeight * 100f);
                 return string.Format("{0} {1}% from {2}", toName, percent, fromName);
@@ -60,8 +54,7 @@ namespace Cinemachine
         /// <summary>Does the blend use a specific Cinemachine Virtual Camera?</summary>
         /// <param name="cam">The camera to test</param>
         /// <returns>True if the camera is involved in the blend</returns>
-        public bool Uses(ICinemachineCamera cam)
-        {
+        public bool Uses(ICinemachineCamera cam) {
             if (cam == CamA || cam == CamB)
                 return true;
             BlendSourceVirtualCamera b = CamA as BlendSourceVirtualCamera;
@@ -79,8 +72,7 @@ namespace Cinemachine
         /// <param name="curve">Blend curve</param>
         /// <param name="t">Current time in blend, relative to the start of the blend</param>
         public CinemachineBlend(
-            ICinemachineCamera a, ICinemachineCamera b, AnimationCurve curve, float duration, float t)
-        {
+            ICinemachineCamera a, ICinemachineCamera b, AnimationCurve curve, float duration, float t) {
             if (a == null || b == null)
                 throw new ArgumentException("Blend cameras cannot be null");
             CamA = a;
@@ -93,8 +85,7 @@ namespace Cinemachine
         /// <summary>Make sure the source cameras get updated.</summary>
         /// <param name="worldUp">Default world up.  Individual vcams may modify this</param>
         /// <param name="deltaTime">Time increment used for calculating time-based behaviours (e.g. damping)</param>
-        public void UpdateCameraState(Vector3 worldUp, float deltaTime)
-        {
+        public void UpdateCameraState(Vector3 worldUp, float deltaTime) {
             // Make sure both cameras have been updated (they are not necessarily
             // enabled, and only enabled cameras get updated automatically
             // every frame)
@@ -110,12 +101,10 @@ namespace Cinemachine
     /// necessary to generate a suitable AnimationCurve for a Cinemachine Blend.</summary>
     [Serializable]
     [DocumentationSorting(10.2f, DocumentationSortingAttribute.Level.UserRef)]
-    public struct CinemachineBlendDefinition
-    {
+    public struct CinemachineBlendDefinition {
         /// <summary>Supported predefined shapes for the blend curve.</summary>
         [DocumentationSorting(10.21f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum Style
-        {
+        public enum Style {
             /// <summary>Zero-length blend</summary>
             Cut,
             /// <summary>S-shaped curve, giving a gentle and smooth transition</summary>
@@ -143,8 +132,7 @@ namespace Cinemachine
         /// <summary>Constructor</summary>
         /// <param name="style">The shape of the blend curve.</param>
         /// <param name="time">The duration (in seconds) of the blend</param>
-        public CinemachineBlendDefinition(Style style, float time)
-        {
+        public CinemachineBlendDefinition(Style style, float time) {
             m_Style = style;
             m_Time = time;
         }
@@ -155,50 +143,43 @@ namespace Cinemachine
         /// duration of the blend. Y-axis values must be in range [0,1] (internally clamped
         /// within Blender) and time must be in range of [0, +infinity)
         /// </summary>
-        public AnimationCurve BlendCurve
-        {
-            get
-            {
+        public AnimationCurve BlendCurve {
+            get {
                 float time = Mathf.Max(0, m_Time);
-                switch (m_Style)
-                {
+                switch (m_Style) {
                     default:
                     case Style.Cut: return new AnimationCurve();
                     case Style.EaseInOut: return AnimationCurve.EaseInOut(0f, 0f, time, 1f);
-                    case Style.EaseIn:
-                    {
-                        AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
-                        Keyframe[] keys = curve.keys;
-                        keys[1].inTangent = 0;
-                        curve.keys = keys;
-                        return curve;
-                    }
-                    case Style.EaseOut:
-                    {
-                        AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
-                        Keyframe[] keys = curve.keys;
-                        keys[0].outTangent = 0;
-                        curve.keys = keys;
-                        return curve;
-                    }
-                    case Style.HardIn:
-                    {
-                        AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
-                        Keyframe[] keys = curve.keys;
-                        keys[0].outTangent = 0;
-                        keys[1].inTangent = 1.5708f; // pi/2 = up
-                        curve.keys = keys;
-                        return curve;
-                    }
-                    case Style.HardOut:
-                    {
-                        AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
-                        Keyframe[] keys = curve.keys;
-                        keys[0].outTangent = 1.5708f; // pi/2 = up
-                        keys[1].inTangent = 0;
-                        curve.keys = keys;
-                        return curve;
-                    }
+                    case Style.EaseIn: {
+                            AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
+                            Keyframe[] keys = curve.keys;
+                            keys[1].inTangent = 0;
+                            curve.keys = keys;
+                            return curve;
+                        }
+                    case Style.EaseOut: {
+                            AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
+                            Keyframe[] keys = curve.keys;
+                            keys[0].outTangent = 0;
+                            curve.keys = keys;
+                            return curve;
+                        }
+                    case Style.HardIn: {
+                            AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
+                            Keyframe[] keys = curve.keys;
+                            keys[0].outTangent = 0;
+                            keys[1].inTangent = 1.5708f; // pi/2 = up
+                            curve.keys = keys;
+                            return curve;
+                        }
+                    case Style.HardOut: {
+                            AnimationCurve curve = AnimationCurve.Linear(0f, 0f, time, 1f);
+                            Keyframe[] keys = curve.keys;
+                            keys[0].outTangent = 1.5708f; // pi/2 = up
+                            keys[1].inTangent = 0;
+                            curve.keys = keys;
+                            return curve;
+                        }
                     case Style.Linear: return AnimationCurve.Linear(0f, 0f, time, 1f);
                 }
             }

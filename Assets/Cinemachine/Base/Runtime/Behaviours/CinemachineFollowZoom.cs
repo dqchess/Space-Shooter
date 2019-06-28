@@ -1,8 +1,7 @@
-using UnityEngine;
 using Cinemachine.Utility;
+using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// An add-on module for Cinemachine Virtual Camera that adjusts
     /// the FOV of the lens to keep the target object at a constant size on the screen,
@@ -12,8 +11,7 @@ namespace Cinemachine
     [ExecuteInEditMode]
     [AddComponentMenu("")] // Hide in menu
     [SaveDuringPlay]
-    public class CinemachineFollowZoom : CinemachineExtension
-    {
+    public class CinemachineFollowZoom : CinemachineExtension {
         /// <summary>The shot width to maintain, in world units, at target distance.
         /// FOV will be adusted as far as possible to maintain this width at the
         /// target distance from the camera.</summary>
@@ -36,45 +34,39 @@ namespace Cinemachine
         [Tooltip("Upper limit for the FOV that this behaviour will generate.")]
         public float m_MaxFOV = 60f;
 
-        private void OnValidate()
-        {
+        private void OnValidate() {
             m_Width = Mathf.Max(0, m_Width);
             m_MaxFOV = Mathf.Clamp(m_MaxFOV, 1, 179);
             m_MinFOV = Mathf.Clamp(m_MinFOV, 1, m_MaxFOV);
         }
 
-        class VcamExtraState
-        {
+        class VcamExtraState {
             public float m_previousFrameZoom = 0;
         }
 
         /// <summary>Callback to preform the zoom adjustment</summary>
         protected override void PostPipelineStageCallback(
             CinemachineVirtualCameraBase vcam,
-            CinemachineCore.Stage stage, ref CameraState state, float deltaTime)
-        {
+            CinemachineCore.Stage stage, ref CameraState state, float deltaTime) {
             VcamExtraState extra = GetExtraState<VcamExtraState>(vcam);
             if (!enabled || deltaTime < 0)
                 extra.m_previousFrameZoom = state.Lens.FieldOfView;
 
             // Set the zoom after the body has been positioned, but before the aim,
             // so that composer can compose using the updated fov.
-            if (stage == CinemachineCore.Stage.Body)
-            {
+            if (stage == CinemachineCore.Stage.Body) {
                 // Try to reproduce the target width
                 float targetWidth = Mathf.Max(m_Width, 0);
                 float fov = 179f;
                 float d = Vector3.Distance(state.CorrectedPosition, state.ReferenceLookAt);
-                if (d > UnityVectorExtensions.Epsilon)
-                {
+                if (d > UnityVectorExtensions.Epsilon) {
                     // Clamp targetWidth to FOV min/max
                     float minW = d * 2f * Mathf.Tan(m_MinFOV * Mathf.Deg2Rad / 2f);
                     float maxW = d * 2f * Mathf.Tan(m_MaxFOV * Mathf.Deg2Rad / 2f);
                     targetWidth = Mathf.Clamp(targetWidth, minW, maxW);
 
                     // Apply damping
-                    if (deltaTime >= 0 && m_Damping > 0)
-                    {
+                    if (deltaTime >= 0 && m_Damping > 0) {
                         float currentWidth = d * 2f * Mathf.Tan(extra.m_previousFrameZoom * Mathf.Deg2Rad / 2f);
                         float delta = targetWidth - currentWidth;
                         delta = Damper.Damp(delta, m_Damping, deltaTime);

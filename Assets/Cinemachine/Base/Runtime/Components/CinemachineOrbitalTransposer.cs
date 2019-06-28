@@ -1,10 +1,9 @@
+using Cinemachine.Utility;
 using System;
 using UnityEngine;
-using Cinemachine.Utility;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a CinemachineComponent in the the Body section of the component pipeline. 
     /// Its job is to position the camera in a variable relationship to a the vcam's 
@@ -28,23 +27,20 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineOrbitalTransposer : CinemachineTransposer
-    {
+    public class CinemachineOrbitalTransposer : CinemachineTransposer {
         /// <summary>
         /// How the "forward" direction is defined.  Orbital offset is in relation to the forward
         /// direction.
         /// </summary>
         [DocumentationSorting(6.2f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct Heading
-        {
+        public struct Heading {
             /// <summary>
             /// Sets the algorithm for determining the target's heading for purposes
             /// of re-centering the camera
             /// </summary>
             [DocumentationSorting(6.21f, DocumentationSortingAttribute.Level.UserRef)]
-            public enum HeadingDefinition
-            {
+            public enum HeadingDefinition {
                 /// <summary>
                 /// Target heading calculated from the difference between its position on
                 /// the last update and current frame.
@@ -83,8 +79,7 @@ namespace Cinemachine
             public float m_HeadingBias;
 
             /// <summary>Constructor</summary>
-            public Heading(HeadingDefinition def, int filterStrength, float bias)
-            {
+            public Heading(HeadingDefinition def, int filterStrength, float bias) {
                 m_HeadingDefinition = def;
                 m_VelocityFilterStrength = filterStrength;
                 m_HeadingBias = bias;
@@ -99,8 +94,7 @@ namespace Cinemachine
         /// <summary>Controls how automatic orbit recentering occurs</summary>
         [DocumentationSorting(6.5f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct Recentering
-        {
+        public struct Recentering {
             /// <summary>If checked, will enable automatic recentering of the
             /// camera based on the heading calculation mode. If FALSE, recenting is disabled.</summary>
             [Tooltip("If checked, will enable automatic recentering of the camera based on the heading definition. If unchecked, recenting is disabled.")]
@@ -116,8 +110,7 @@ namespace Cinemachine
             public float m_RecenteringTime;
 
             /// <summary>Constructor with specific field values</summary>
-            public Recentering(bool enabled, float recenterWaitTime,  float recenteringSpeed)
-            {
+            public Recentering(bool enabled, float recenterWaitTime, float recenteringSpeed) {
                 m_enabled = enabled;
                 m_RecenterWaitTime = recenterWaitTime;
                 m_RecenteringTime = recenteringSpeed;
@@ -125,8 +118,7 @@ namespace Cinemachine
             }
 
             /// <summary>Call this from OnValidate()</summary>
-            public void Validate()
-            {
+            public void Validate() {
                 m_RecenterWaitTime = Mathf.Max(0, m_RecenterWaitTime);
                 m_RecenteringTime = Mathf.Max(0, m_RecenteringTime);
             }
@@ -134,10 +126,8 @@ namespace Cinemachine
             // Legacy support
             [SerializeField] [HideInInspector] [FormerlySerializedAs("m_HeadingDefinition")] private int m_LegacyHeadingDefinition;
             [SerializeField] [HideInInspector] [FormerlySerializedAs("m_VelocityFilterStrength")] private int m_LegacyVelocityFilterStrength;
-            internal bool LegacyUpgrade(ref Heading.HeadingDefinition heading, ref int velocityFilter)
-            {
-                if (m_LegacyHeadingDefinition != -1 && m_LegacyVelocityFilterStrength != -1)
-                {
+            internal bool LegacyUpgrade(ref Heading.HeadingDefinition heading, ref int velocityFilter) {
+                if (m_LegacyHeadingDefinition != -1 && m_LegacyVelocityFilterStrength != -1) {
                     heading = (Heading.HeadingDefinition)m_LegacyHeadingDefinition;
                     velocityFilter = m_LegacyVelocityFilterStrength;
                     m_LegacyHeadingDefinition = m_LegacyVelocityFilterStrength = -1;
@@ -160,13 +150,11 @@ namespace Cinemachine
         [SerializeField] [HideInInspector] [FormerlySerializedAs("m_Radius")] private float m_LegacyRadius = float.MaxValue;
         [SerializeField] [HideInInspector] [FormerlySerializedAs("m_HeightOffset")] private float m_LegacyHeightOffset = float.MaxValue;
         [SerializeField] [HideInInspector] [FormerlySerializedAs("m_HeadingBias")] private float m_LegacyHeadingBias = float.MaxValue;
-        protected override void OnValidate()
-        {
+        protected override void OnValidate() {
             // Upgrade after a legacy deserialize
-            if (m_LegacyRadius != float.MaxValue 
+            if (m_LegacyRadius != float.MaxValue
                 && m_LegacyHeightOffset != float.MaxValue
-                && m_LegacyHeadingBias != float.MaxValue)
-            {
+                && m_LegacyHeadingBias != float.MaxValue) {
                 m_FollowOffset = new Vector3(0, m_LegacyHeightOffset, -m_LegacyRadius);
                 m_LegacyHeightOffset = m_LegacyRadius = float.MaxValue;
 
@@ -203,8 +191,8 @@ namespace Cinemachine
         /// private AxisState object, and that AxisState object will be updated and
         /// used to calculate the heading.
         /// </summary>
-        internal UpdateHeadingDelegate HeadingUpdater 
-            = (CinemachineOrbitalTransposer orbital, float deltaTime, Vector3 up) 
+        internal UpdateHeadingDelegate HeadingUpdater
+            = (CinemachineOrbitalTransposer orbital, float deltaTime, Vector3 up)
                 => { return orbital.UpdateHeading(deltaTime, up, ref orbital.m_XAxis); };
 
         /// <summary>
@@ -215,48 +203,37 @@ namespace Cinemachine
         /// <param name="axis"></param>
         /// <returns>Axis value</returns>
         /// </summary>
-        public float UpdateHeading(float deltaTime, Vector3 up, ref AxisState axis)
-        {
+        public float UpdateHeading(float deltaTime, Vector3 up, ref AxisState axis) {
             // Only read joystick when game is playing
-            if (deltaTime >= 0 || CinemachineCore.Instance.IsLive(VirtualCamera))
-            {
+            if (deltaTime >= 0 || CinemachineCore.Instance.IsLive(VirtualCamera)) {
                 bool xAxisInput = false;
                 xAxisInput |= axis.Update(deltaTime);
-                if (xAxisInput)
-                {
+                if (xAxisInput) {
                     mLastHeadingAxisInputTime = Time.time;
                     mHeadingRecenteringVelocity = 0;
                 }
             }
             float targetHeading = GetTargetHeading(axis.Value, GetReferenceOrientation(up), deltaTime);
-            if (deltaTime < 0)
-            {
+            if (deltaTime < 0) {
                 mHeadingRecenteringVelocity = 0;
                 if (m_RecenterToTargetHeading.m_enabled)
                     axis.Value = targetHeading;
-            }
-            else
-            {
+            } else {
                 // Recentering
                 if (m_BindingMode != BindingMode.SimpleFollowWithWorldUp
                     && m_RecenterToTargetHeading.m_enabled
-                    && (Time.time > (mLastHeadingAxisInputTime + m_RecenterToTargetHeading.m_RecenterWaitTime)))
-                {
+                    && (Time.time > (mLastHeadingAxisInputTime + m_RecenterToTargetHeading.m_RecenterWaitTime))) {
                     // Scale value determined heuristically, to account for accel/decel
                     float recenterTime = m_RecenterToTargetHeading.m_RecenteringTime / 3f;
                     if (recenterTime <= deltaTime)
                         axis.Value = targetHeading;
-                    else
-                    {
+                    else {
                         float headingError = Mathf.DeltaAngle(axis.Value, targetHeading);
                         float absHeadingError = Mathf.Abs(headingError);
-                        if (absHeadingError < UnityVectorExtensions.Epsilon)
-                        {
+                        if (absHeadingError < UnityVectorExtensions.Epsilon) {
                             axis.Value = targetHeading;
                             mHeadingRecenteringVelocity = 0;
-                        }
-                        else 
-                        {
+                        } else {
                             float scale = deltaTime / recenterTime;
                             float desiredVelocity = Mathf.Sign(headingError)
                                 * Mathf.Min(absHeadingError, absHeadingError * scale);
@@ -276,8 +253,7 @@ namespace Cinemachine
             return finalHeading;
         }
 
-        private void OnEnable()
-        {
+        private void OnEnable() {
             m_XAxis.SetThresholds(0f, 360f, true);
             PreviousTarget = null;
             mLastTargetPosition = Vector3.zero;
@@ -295,14 +271,12 @@ namespace Cinemachine
         /// <summary>Positions the virtual camera according to the transposer rules.</summary>
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for damping.  If less than 0, no damping is done.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachineOrbitalTransposer.MutateCameraState");
             InitPrevFrameStateInfo(ref curState, deltaTime);
 
             // Update the heading
-            if (FollowTarget != PreviousTarget)
-            {
+            if (FollowTarget != PreviousTarget) {
                 PreviousTarget = FollowTarget;
                 mTargetRigidBody = (PreviousTarget == null) ? null : PreviousTarget.GetComponent<Rigidbody>();
                 mLastTargetPosition = (PreviousTarget == null) ? Vector3.zero : PreviousTarget.position;
@@ -310,8 +284,7 @@ namespace Cinemachine
             }
             float heading = HeadingUpdater(this, deltaTime, curState.ReferenceUp);
 
-            if (IsValid)
-            {
+            if (IsValid) {
                 mLastTargetPosition = FollowTarget.position;
 
                 // Calculate the heading
@@ -327,8 +300,7 @@ namespace Cinemachine
 
                 // Place the camera
                 curState.ReferenceUp = orient * Vector3.up;
-                if (deltaTime >= 0)
-                {
+                if (deltaTime >= 0) {
                     Vector3 bypass = (headingRot * offset) - mHeadingPrevFrame * mOffsetPrevFrame;
                     bypass = orient * bypass;
                     curState.PositionDampingBypass = bypass;
@@ -345,17 +317,15 @@ namespace Cinemachine
         /// <summary>API for the editor, to process a position drag from the user.
         /// This implementation adds the delta to the follow offset, after zeroing out local x.</summary>
         /// <param name="delta">The amount dragged this frame</param>
-        public override void OnPositionDragged(Vector3 delta)
-        {
+        public override void OnPositionDragged(Vector3 delta) {
             Quaternion targetOrientation = GetReferenceOrientation(VcamState.ReferenceUp);
             Vector3 localOffset = Quaternion.Inverse(targetOrientation) * delta;
             localOffset.x = 0;
             m_FollowOffset += localOffset;
             m_FollowOffset = EffectiveOffset;
         }
-        
-        static string GetFullName(GameObject current)
-        {
+
+        static string GetFullName(GameObject current) {
             if (current == null)
                 return "";
             if (current.transform.parent == null)
@@ -365,16 +335,14 @@ namespace Cinemachine
 
         // Make sure this is calld only once per frame
         private float GetTargetHeading(
-            float currentHeading, Quaternion targetOrientation, float deltaTime)
-        {
+            float currentHeading, Quaternion targetOrientation, float deltaTime) {
             if (m_BindingMode == BindingMode.SimpleFollowWithWorldUp)
                 return 0;
             if (FollowTarget == null)
                 return currentHeading;
 
             if (m_Heading.m_HeadingDefinition == Heading.HeadingDefinition.Velocity
-                && mTargetRigidBody == null)
-            {
+                && mTargetRigidBody == null) {
                 Debug.Log(string.Format(
                         "Attempted to use HeadingDerivationMode.Velocity to calculate heading for {0}. No RigidBody was present on '{1}'. Defaulting to position delta",
                         GetFullName(VirtualCamera.VirtualCameraGameObject), FollowTarget));
@@ -382,8 +350,7 @@ namespace Cinemachine
             }
 
             Vector3 velocity = Vector3.zero;
-            switch (m_Heading.m_HeadingDefinition)
-            {
+            switch (m_Heading.m_HeadingDefinition) {
                 case Heading.HeadingDefinition.PositionDelta:
                     velocity = FollowTarget.position - mLastTargetPosition;
                     break;
@@ -416,10 +383,8 @@ namespace Cinemachine
             return currentHeading;
         }
 
-        class HeadingTracker
-        {
-            struct Item
-            {
+        class HeadingTracker {
+            struct Item {
                 public Vector3 velocity;
                 public float weight;
                 public float time;
@@ -435,8 +400,7 @@ namespace Cinemachine
 
             Vector3 mLastGoodHeading = Vector3.zero;
 
-            public HeadingTracker(int filterSize)
-            {
+            public HeadingTracker(int filterSize) {
                 mHistory = new Item[filterSize];
                 float historyHalfLife = filterSize / 5f; // somewhat arbitrarily
                 mDecayExponent = -Mathf.Log(2f) / historyHalfLife;
@@ -445,8 +409,7 @@ namespace Cinemachine
 
             public int FilterSize { get { return mHistory.Length; } }
 
-            void ClearHistory()
-            {
+            void ClearHistory() {
                 mTop = mBottom = mCount = 0;
                 mWeightSum = 0;
                 mHeadingSum = Vector3.zero;
@@ -455,16 +418,13 @@ namespace Cinemachine
             static float mDecayExponent;
             static float Decay(float time) { return Mathf.Exp(time * mDecayExponent); }
 
-            public void Add(Vector3 velocity)
-            {
-                if (FilterSize == 0)
-                {
+            public void Add(Vector3 velocity) {
+                if (FilterSize == 0) {
                     mLastGoodHeading = velocity;
                     return;
                 }
                 float weight = velocity.magnitude;
-                if (weight > UnityVectorExtensions.Epsilon)
-                {
+                if (weight > UnityVectorExtensions.Epsilon) {
                     Item item = new Item();
                     item.velocity = velocity;
                     item.weight = weight;
@@ -483,10 +443,8 @@ namespace Cinemachine
                 }
             }
 
-            void PopBottom()
-            {
-                if (mCount > 0)
-                {
+            void PopBottom() {
+                if (mCount > 0) {
                     float time = Time.time;
                     Item item = mHistory[mBottom];
                     if (++mBottom == FilterSize)
@@ -501,8 +459,7 @@ namespace Cinemachine
                 }
             }
 
-            public void DecayHistory()
-            {
+            public void DecayHistory() {
                 float time = Time.time;
                 float decay = Decay(time - mWeightTime);
                 mWeightSum *= decay;
@@ -513,13 +470,11 @@ namespace Cinemachine
                     mHeadingSum = mHeadingSum * decay;
             }
 
-            public Vector3 GetReliableHeading()
-            {
+            public Vector3 GetReliableHeading() {
                 // Update Last Good Heading
                 if (mWeightSum > UnityVectorExtensions.Epsilon
-                    && (mCount == mHistory.Length || mLastGoodHeading.AlmostZero()))
-                {
-                    Vector3  h = mHeadingSum / mWeightSum;
+                    && (mCount == mHistory.Length || mLastGoodHeading.AlmostZero())) {
+                    Vector3 h = mHeadingSum / mWeightSum;
                     if (!h.AlmostZero())
                         mLastGoodHeading = h.normalized;
                 }

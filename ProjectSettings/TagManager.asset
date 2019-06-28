@@ -5,6 +5,16 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Boss
+  - EnemyBot
+  - Score Text
+  - GamePlayPanel
+  - Joystick
+  - Shield
+  - GameOverPanel
+  - NextLevelPanel
+  - LoadingScreen
+  - Plane
   layers:
   - Default
   - TransparentFX
@@ -19,7 +29,7 @@ TagManager:
   - Player Space Ship
   - Enemy Space Ship
   - Enemy Missile
-  - 
+  - Power Up
   - 
   - 
   - 

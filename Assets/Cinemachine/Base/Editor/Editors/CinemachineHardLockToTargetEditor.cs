@@ -1,13 +1,10 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineHardLockToTarget))]
-    public sealed class CinemachineHardLockToTargetEditor : BaseEditor<CinemachineHardLockToTarget>
-    {
-        public override void OnInspectorGUI()
-        {
+    public sealed class CinemachineHardLockToTargetEditor : BaseEditor<CinemachineHardLockToTarget> {
+        public override void OnInspectorGUI() {
             BeginInspector();
             if (Target.FollowTarget == null)
                 EditorGUILayout.HelpBox(

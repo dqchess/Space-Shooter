@@ -1,9 +1,8 @@
+using Cinemachine.Utility;
 using System.Collections.Generic;
 using UnityEngine;
-using Cinemachine.Utility;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// Cinemachine ClearShot is a "manager camera" that owns and manages a set of 
     /// Virtual Camera gameObject children.  When Live, the ClearShot will check the
@@ -24,8 +23,7 @@ namespace Cinemachine
     [DocumentationSorting(12, DocumentationSortingAttribute.Level.UserRef)]
     [ExecuteInEditMode, DisallowMultipleComponent]
     [AddComponentMenu("Cinemachine/CinemachineClearShot")]
-    public class CinemachineClearShot : CinemachineVirtualCameraBase
-    {
+    public class CinemachineClearShot : CinemachineVirtualCameraBase {
         /// <summary>Default object for the camera children to look at (the aim target), if not specified in a child camera.  May be empty.</summary>
         [Tooltip("Default object for the camera children to look at (the aim target), if not specified in a child camera.  May be empty if all children specify targets of their own.")]
         [NoSaveDuringPlay]
@@ -68,18 +66,16 @@ namespace Cinemachine
         public CinemachineBlenderSettings m_CustomBlends = null;
 
         /// <summary>Gets a brief debug description of this virtual camera, for use when displayiong debug info</summary>
-        public override string Description 
-        { 
-            get 
-            { 
+        public override string Description {
+            get {
                 // Show the active camera and blend
                 ICinemachineCamera vcam = LiveChild;
-                if (mActiveBlend == null) 
+                if (mActiveBlend == null)
                     return (vcam != null) ? "[" + vcam.Name + "]" : "(none)";
                 return mActiveBlend.Description;
             }
         }
-        
+
         /// <summary>Get the current "best" child virtual camera, that would be chosen
         /// if the ClearShot camera were active.</summary>
         public ICinemachineCamera LiveChild { set; get; }
@@ -93,24 +89,21 @@ namespace Cinemachine
         /// <summary>Check whether the vcam a live child of this camera.</summary>
         /// <param name="vcam">The Virtual Camera to check</param>
         /// <returns>True if the vcam is currently actively influencing the state of this vcam</returns>
-        public override bool IsLiveChild(ICinemachineCamera vcam) 
-        { 
-            return vcam == LiveChild 
+        public override bool IsLiveChild(ICinemachineCamera vcam) {
+            return vcam == LiveChild
                 || (mActiveBlend != null && (vcam == mActiveBlend.CamA || vcam == mActiveBlend.CamB));
         }
 
         /// <summary>Get the current LookAt target.  Returns parent's LookAt if parent
         /// is non-null and no specific LookAt defined for this camera</summary>
-        override public Transform LookAt
-        {
+        override public Transform LookAt {
             get { return ResolveLookAt(m_LookAt); }
             set { m_LookAt = value; }
         }
 
         /// <summary>Get the current Follow target.  Returns parent's Follow if parent
         /// is non-null and no specific Follow defined for this camera</summary>
-        override public Transform Follow
-        {
+        override public Transform Follow {
             get { return ResolveFollow(m_Follow); }
             set { m_Follow = value; }
         }
@@ -118,8 +111,7 @@ namespace Cinemachine
         /// <summary>Remove a Pipeline stage hook callback.
         /// Make sure it is removed from all the children.</summary>
         /// <param name="d">The delegate to remove.</param>
-        public override void RemovePostPipelineStageHook(OnPostPipelineStageDelegate d)
-        {
+        public override void RemovePostPipelineStageHook(OnPostPipelineStageDelegate d) {
             base.RemovePostPipelineStageHook(d);
             UpdateListOfChildren();
             foreach (var vcam in m_ChildCameras)
@@ -131,8 +123,7 @@ namespace Cinemachine
         /// updates all the children, chooses the best one, and implements any required blending.</summary>
         /// <param name="worldUp">Default world Up, set by the CinemachineBrain</param>
         /// <param name="deltaTime">Delta time for time-based effects (ignore if less than 0)</param>
-        public override void UpdateCameraState(Vector3 worldUp, float deltaTime)
-        {
+        public override void UpdateCameraState(Vector3 worldUp, float deltaTime) {
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachineClearShot.UpdateCameraState");
             if (!PreviousStateIsValid)
                 deltaTime = -1;
@@ -143,8 +134,7 @@ namespace Cinemachine
             LiveChild = ChooseCurrentCamera(worldUp, deltaTime);
 
             // Are we transitioning cameras?
-            if (previousCam != null && LiveChild != null && previousCam != LiveChild)
-            {
+            if (previousCam != null && LiveChild != null && previousCam != LiveChild) {
                 // Create a blend (will be null if a cut)
                 float duration = 0;
                 AnimationCurve curve = LookupBlendCurve(previousCam, LiveChild, out duration);
@@ -164,49 +154,42 @@ namespace Cinemachine
             }
 
             // Advance the current blend (if any)
-            if (mActiveBlend != null)
-            {
+            if (mActiveBlend != null) {
                 mActiveBlend.TimeInBlend += (deltaTime >= 0)
                     ? deltaTime : mActiveBlend.Duration;
                 if (mActiveBlend.IsComplete)
                     mActiveBlend = null;
             }
 
-            if (mActiveBlend != null)
-            {
+            if (mActiveBlend != null) {
                 mActiveBlend.UpdateCameraState(worldUp, deltaTime);
-                m_State =  mActiveBlend.State;
-            }
-            else if (LiveChild != null)
-                m_State =  LiveChild.State;
+                m_State = mActiveBlend.State;
+            } else if (LiveChild != null)
+                m_State = LiveChild.State;
 
             PreviousStateIsValid = true;
             //UnityEngine.Profiling.Profiler.EndSample();
         }
 
         /// <summary>Makes sure the internal child cache is up to date</summary>
-        protected override void OnEnable()
-        {
+        protected override void OnEnable() {
             base.OnEnable();
             InvalidateListOfChildren();
             mActiveBlend = null;
         }
 
         /// <summary>Makes sure the internal child cache is up to date</summary>
-        public void OnTransformChildrenChanged()
-        {
+        public void OnTransformChildrenChanged() {
             InvalidateListOfChildren();
         }
 
 #if UNITY_EDITOR
         /// <summary>Displays the current active camera on the game screen, if requested</summary>
-        protected override void OnGUI()
-        {
+        protected override void OnGUI() {
             base.OnGUI();
             if (!m_ShowDebugText)
                 CinemachineGameWindowDebug.ReleaseScreenPos(this);
-            else
-            {
+            else {
                 string text = Name + ": " + Description;
                 Rect r = CinemachineGameWindowDebug.GetScreenPos(this, text, GUI.skin.box);
                 GUI.Label(r, text, GUI.skin.box);
@@ -219,8 +202,7 @@ namespace Cinemachine
         CameraState m_State = CameraState.Default;
 
         /// <summary>The list of child cameras.  These are just the immediate children in the hierarchy.</summary>
-        public CinemachineVirtualCameraBase[] ChildCameras
-        { 
+        public CinemachineVirtualCameraBase[] ChildCameras {
             get { UpdateListOfChildren(); return m_ChildCameras; }
         }
 
@@ -229,23 +211,20 @@ namespace Cinemachine
         ICinemachineCamera mPendingCamera;
         private CinemachineBlend mActiveBlend = null;
 
-        void InvalidateListOfChildren()
-        { 
-            m_ChildCameras = null; 
-            m_RandomizedChilden = null; 
-            LiveChild = null; 
+        void InvalidateListOfChildren() {
+            m_ChildCameras = null;
+            m_RandomizedChilden = null;
+            LiveChild = null;
         }
 
         /// <summary>If RandomizeChoice is enabled, call this to re-randomize the children next frame.
         /// This is useful if you want to freshen up the shot.</summary>
-        public void ResetRandomization()
-        {
+        public void ResetRandomization() {
             m_RandomizedChilden = null;
-            mRandomizeNow = true; 
+            mRandomizeNow = true;
         }
-        
-        void UpdateListOfChildren()
-        {
+
+        void UpdateListOfChildren() {
             if (m_ChildCameras != null)
                 return;
 
@@ -264,12 +243,10 @@ namespace Cinemachine
         }
 
         private bool mRandomizeNow = false;
-        private  CinemachineVirtualCameraBase[] m_RandomizedChilden = null;
+        private CinemachineVirtualCameraBase[] m_RandomizedChilden = null;
 
-        private ICinemachineCamera ChooseCurrentCamera(Vector3 worldUp, float deltaTime)
-        {
-            if (m_ChildCameras == null || m_ChildCameras.Length == 0)
-            {
+        private ICinemachineCamera ChooseCurrentCamera(Vector3 worldUp, float deltaTime) {
+            if (m_ChildCameras == null || m_ChildCameras.Length == 0) {
                 mActivationTime = 0;
                 return null;
             }
@@ -277,8 +254,7 @@ namespace Cinemachine
             CinemachineVirtualCameraBase[] childCameras = m_ChildCameras;
             if (!m_RandomizeChoice)
                 m_RandomizedChilden = null;
-            else if (m_ChildCameras.Length > 1)
-            {
+            else if (m_ChildCameras.Length > 1) {
                 if (m_RandomizedChilden == null)
                     m_RandomizedChilden = Randomize(m_ChildCameras);
                 childCameras = m_RandomizedChilden;
@@ -287,19 +263,16 @@ namespace Cinemachine
             if (LiveChild != null && !LiveChild.VirtualCameraGameObject.activeSelf)
                 LiveChild = null;
             ICinemachineCamera best = LiveChild;
-            for (int i = 0; i < childCameras.Length; ++i)
-            {
+            for (int i = 0; i < childCameras.Length; ++i) {
                 CinemachineVirtualCameraBase vcam = childCameras[i];
-                if (vcam != null && vcam.VirtualCameraGameObject.activeInHierarchy)
-                {
+                if (vcam != null && vcam.VirtualCameraGameObject.activeInHierarchy) {
                     // Choose the first in the list that is better than the current
-                    if (best == null 
+                    if (best == null
                         || vcam.State.ShotQuality > best.State.ShotQuality
                         || (vcam.State.ShotQuality == best.State.ShotQuality && vcam.Priority > best.Priority)
-                        || (m_RandomizeChoice && mRandomizeNow && (ICinemachineCamera)vcam != LiveChild 
-                            && vcam.State.ShotQuality == best.State.ShotQuality 
-                            && vcam.Priority == best.Priority))
-                    {
+                        || (m_RandomizeChoice && mRandomizeNow && (ICinemachineCamera)vcam != LiveChild
+                            && vcam.State.ShotQuality == best.State.ShotQuality
+                            && vcam.Priority == best.Priority)) {
                         best = vcam;
                     }
                 }
@@ -307,11 +280,9 @@ namespace Cinemachine
             mRandomizeNow = false;
 
             float now = Time.time;
-            if (mActivationTime != 0)
-            {
+            if (mActivationTime != 0) {
                 // Is it active now?
-                if (LiveChild == best)
-                {
+                if (LiveChild == best) {
                     // Yes, cancel any pending
                     mPendingActivationTime = 0;
                     mPendingCamera = null;
@@ -319,15 +290,12 @@ namespace Cinemachine
                 }
 
                 // Is it pending?
-                if (deltaTime >= 0)
-                {
-                    if (mPendingActivationTime != 0 && mPendingCamera == best)
-                    {
+                if (deltaTime >= 0) {
+                    if (mPendingActivationTime != 0 && mPendingCamera == best) {
                         // Has it been pending long enough, and are we allowed to switch away
                         // from the active action?
                         if ((now - mPendingActivationTime) > m_ActivateAfter
-                            && (now - mActivationTime) > m_MinDuration)
-                        {
+                            && (now - mActivationTime) > m_MinDuration) {
                             // Yes, activate it now
                             m_RandomizedChilden = null; // reshuffle the children
                             mActivationTime = now;
@@ -344,11 +312,9 @@ namespace Cinemachine
             mPendingCamera = null;
 
             // Can we activate it now?
-            if (deltaTime >= 0 && mActivationTime > 0)
-            {
+            if (deltaTime >= 0 && mActivationTime > 0) {
                 if (m_ActivateAfter > 0
-                    || (now - mActivationTime) < m_MinDuration)
-                {
+                    || (now - mActivationTime) < m_MinDuration) {
                     // Too early - make it pending
                     mPendingCamera = best;
                     mPendingActivationTime = now;
@@ -362,11 +328,9 @@ namespace Cinemachine
         }
 
         struct Pair { public int a; public float b; }
-        CinemachineVirtualCameraBase[] Randomize(CinemachineVirtualCameraBase[] src)
-        {
+        CinemachineVirtualCameraBase[] Randomize(CinemachineVirtualCameraBase[] src) {
             List<Pair> pairs = new List<Pair>();
-            for (int i = 0; i < src.Length; ++i)
-            {
+            for (int i = 0; i < src.Length; ++i) {
                 Pair p = new Pair(); p.a = i; p.b = Random.Range(0, 1000f);
                 pairs.Add(p);
             }
@@ -379,32 +343,28 @@ namespace Cinemachine
         }
 
         private AnimationCurve LookupBlendCurve(
-            ICinemachineCamera fromKey, ICinemachineCamera toKey, out float duration)
-        {
+            ICinemachineCamera fromKey, ICinemachineCamera toKey, out float duration) {
             // Get the blend curve that's most appropriate for these cameras
             AnimationCurve blendCurve = m_DefaultBlend.BlendCurve;
-            if (m_CustomBlends != null)
-            {
+            if (m_CustomBlends != null) {
                 string fromCameraName = (fromKey != null) ? fromKey.Name : string.Empty;
                 string toCameraName = (toKey != null) ? toKey.Name : string.Empty;
                 blendCurve = m_CustomBlends.GetBlendCurveForVirtualCameras(
                         fromCameraName, toCameraName, blendCurve);
             }
             var keys = blendCurve.keys;
-            duration = (keys == null || keys.Length == 0) ? 0 : keys[keys.Length-1].time;
+            duration = (keys == null || keys.Length == 0) ? 0 : keys[keys.Length - 1].time;
             return blendCurve;
         }
 
         private CinemachineBlend CreateBlend(
-            ICinemachineCamera camA, ICinemachineCamera camB, 
+            ICinemachineCamera camA, ICinemachineCamera camB,
             AnimationCurve blendCurve, float duration,
-            CinemachineBlend activeBlend, float deltaTime)
-        {
+            CinemachineBlend activeBlend, float deltaTime) {
             if (blendCurve == null || duration <= 0 || (camA == null && camB == null))
                 return null;
 
-            if (camA == null || activeBlend != null)
-            {
+            if (camA == null || activeBlend != null) {
                 // Blend from the current camera position
                 CameraState state = (activeBlend != null) ? activeBlend.State : State;
                 camA = new StaticPointVirtualCamera(state, (activeBlend != null) ? "Mid-blend" : "(none)");
@@ -418,11 +378,9 @@ namespace Cinemachine
         /// <param name="worldUp">Default world Up, set by the CinemachineBrain</param>
         /// <param name="deltaTime">Delta time for time-based effects (ignore if less than or equal to 0)</param>
         public override void OnTransitionFromCamera(
-            ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime) 
-        {
+            ICinemachineCamera fromCam, Vector3 worldUp, float deltaTime) {
             base.OnTransitionFromCamera(fromCam, worldUp, deltaTime);
-            if (m_RandomizeChoice && mActiveBlend == null)
-            {
+            if (m_RandomizeChoice && mActiveBlend == null) {
                 m_RandomizedChilden = null;
                 LiveChild = null;
                 UpdateCameraState(worldUp, deltaTime);

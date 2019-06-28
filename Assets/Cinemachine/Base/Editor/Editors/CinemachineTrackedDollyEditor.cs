@@ -2,16 +2,12 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Cinemachine.Editor
-{
+namespace Cinemachine.Editor {
     [CustomEditor(typeof(CinemachineTrackedDolly))]
-    internal sealed class CinemachineTrackedDollyEditor : BaseEditor<CinemachineTrackedDolly>
-    {
-        protected override List<string> GetExcludedPropertiesInInspector()
-        {
+    internal sealed class CinemachineTrackedDollyEditor : BaseEditor<CinemachineTrackedDolly> {
+        protected override List<string> GetExcludedPropertiesInInspector() {
             List<string> excluded = base.GetExcludedPropertiesInInspector();
-            switch (Target.m_CameraUp)
-            {
+            switch (Target.m_CameraUp) {
                 default:
                     break;
                 case CinemachineTrackedDolly.CameraUpMode.PathNoRoll:
@@ -27,8 +23,7 @@ namespace Cinemachine.Editor
             return excluded;
         }
 
-        public override void OnInspectorGUI()
-        {
+        public override void OnInspectorGUI() {
             BeginInspector();
             if (Target.m_Path == null)
                 EditorGUILayout.HelpBox("A Path is required", MessageType.Warning);
@@ -38,13 +33,10 @@ namespace Cinemachine.Editor
         }
 
         [DrawGizmo(GizmoType.Active | GizmoType.InSelectionHierarchy, typeof(CinemachineTrackedDolly))]
-        private static void DrawTrackeDollyGizmos(CinemachineTrackedDolly target, GizmoType selectionType)
-        {
-            if (target.IsValid)
-            {
+        private static void DrawTrackeDollyGizmos(CinemachineTrackedDolly target, GizmoType selectionType) {
+            if (target.IsValid) {
                 CinemachinePathBase path = target.m_Path;
-                if (path != null)
-                {
+                if (path != null) {
                     CinemachinePathEditor.DrawPathGizmo(path, path.m_Appearance.pathColor);
                     Vector3 pos = path.EvaluatePositionAtUnit(target.m_PathPosition, target.m_PositionUnits);
                     Color oldColor = Gizmos.color;

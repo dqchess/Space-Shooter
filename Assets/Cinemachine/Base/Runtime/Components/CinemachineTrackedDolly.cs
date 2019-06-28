@@ -1,10 +1,9 @@
-using UnityEngine;
-using System;
 using Cinemachine.Utility;
+using System;
+using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// A Cinemachine Virtual Camera Body component that constrains camera motion
     /// to a CinemachinePath.  The camera can move along the path.
@@ -18,8 +17,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineTrackedDolly : CinemachineComponentBase
-    {
+    public class CinemachineTrackedDolly : CinemachineComponentBase {
         /// <summary>The path to which the camera will be constrained.  This must be non-null.</summary>
         [Tooltip("The path to which the camera will be constrained.  This must be non-null.")]
         public CinemachinePathBase m_Path;
@@ -64,8 +62,7 @@ namespace Cinemachine
 
         /// <summary>Different ways to set the camera's up vector</summary>
         [DocumentationSorting(7.1f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum CameraUpMode
-        {
+        public enum CameraUpMode {
             /// <summary>Leave the camera's up vector alone.  It will be set according to the Brain's WorldUp.</summary>
             Default,
             /// <summary>Take the up vector from the path's up vector at the current point</summary>
@@ -103,8 +100,7 @@ namespace Cinemachine
         /// <summary>Controls how automatic dollying occurs</summary>
         [DocumentationSorting(7.2f, DocumentationSortingAttribute.Level.UserRef)]
         [Serializable]
-        public struct AutoDolly
-        {
+        public struct AutoDolly {
             /// <summary>If checked, will enable automatic dolly, which chooses a path position
             /// that is as close as possible to the Follow target.</summary>
             [Tooltip("If checked, will enable automatic dolly, which chooses a path position that is as close as possible to the Follow target.  Note: this can have significant performance impact")]
@@ -126,8 +122,7 @@ namespace Cinemachine
             public int m_SearchResolution;
 
             /// <summary>Constructor with specific field values</summary>
-            public AutoDolly(bool enabled, float positionOffset, int searchRadius, int stepsPerSegment)
-            {
+            public AutoDolly(bool enabled, float positionOffset, int searchRadius, int stepsPerSegment) {
                 m_Enabled = enabled;
                 m_PositionOffset = positionOffset;
                 m_SearchRadius = searchRadius;
@@ -149,11 +144,9 @@ namespace Cinemachine
         /// <summary>Positions the virtual camera according to the transposer rules.</summary>
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for damping.  If less that 0, no damping is done.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
             // Init previous frame state info
-            if (deltaTime < 0)
-            {
+            if (deltaTime < 0) {
                 m_PreviousPathPosition = m_PathPosition;
                 m_PreviousCameraPosition = curState.RawPosition;
             }
@@ -163,8 +156,7 @@ namespace Cinemachine
 
             //UnityEngine.Profiling.Profiler.BeginSample("CinemachineTrackedDolly.MutateCameraState");
             // Get the new ideal path base position
-            if (m_AutoDolly.m_Enabled && FollowTarget != null)
-            {
+            if (m_AutoDolly.m_Enabled && FollowTarget != null) {
                 float prevPos = m_PreviousPathPosition;
                 if (m_PositionUnits == CinemachinePathBase.PositionUnits.Distance)
                     prevPos = m_Path.GetPathPositionFromDistance(prevPos);
@@ -172,7 +164,7 @@ namespace Cinemachine
                 m_PathPosition = m_Path.FindClosestPoint(
                     FollowTarget.transform.position,
                     Mathf.FloorToInt(prevPos),
-                    (deltaTime < 0 || m_AutoDolly.m_SearchRadius <= 0) 
+                    (deltaTime < 0 || m_AutoDolly.m_SearchRadius <= 0)
                         ? -1 : m_AutoDolly.m_SearchRadius,
                     m_AutoDolly.m_SearchResolution);
                 if (m_PositionUnits == CinemachinePathBase.PositionUnits.Distance)
@@ -183,16 +175,13 @@ namespace Cinemachine
             }
             float newPathPosition = m_PathPosition;
 
-            if (deltaTime >= 0)
-            {
+            if (deltaTime >= 0) {
                 // Normalize previous position to find the shortest path
                 float maxUnit = m_Path.MaxUnit(m_PositionUnits);
-                if (maxUnit > 0)
-                {
+                if (maxUnit > 0) {
                     float prev = m_Path.NormalizeUnit(m_PreviousPathPosition, m_PositionUnits);
                     float next = m_Path.NormalizeUnit(newPathPosition, m_PositionUnits);
-                    if (m_Path.Looped && Mathf.Abs(next - prev) > maxUnit / 2)
-                    {
+                    if (m_Path.Looped && Mathf.Abs(next - prev) > maxUnit / 2) {
                         if (next > prev)
                             prev += maxUnit;
                         else
@@ -220,8 +209,7 @@ namespace Cinemachine
             newCameraPos += m_PathOffset.z * offsetZ;
 
             // Apply damping to the remaining directions
-            if (deltaTime >= 0)
-            {
+            if (deltaTime >= 0) {
                 Vector3 currentCameraPos = m_PreviousCameraPosition;
                 Vector3 delta = (currentCameraPos - newCameraPos);
                 Vector3 delta1 = Vector3.Dot(delta, offsetY) * offsetY;
@@ -233,15 +221,13 @@ namespace Cinemachine
             curState.RawPosition = m_PreviousCameraPosition = newCameraPos;
 
             // Set the orientation and up
-            Quaternion newOrientation 
+            Quaternion newOrientation
                 = GetTargetOrientationAtPathPoint(newPathOrientation, curState.ReferenceUp);
             if (deltaTime < 0)
                 m_PreviousOrientation = newOrientation;
-            else 
-            {
-                if (deltaTime >= 0)
-                {
-                    Vector3 relative = (Quaternion.Inverse(m_PreviousOrientation) 
+            else {
+                if (deltaTime >= 0) {
+                    Vector3 relative = (Quaternion.Inverse(m_PreviousOrientation)
                         * newOrientation).eulerAngles;
                     for (int i = 0; i < 3; ++i)
                         if (relative[i] > 180)
@@ -260,21 +246,18 @@ namespace Cinemachine
         /// <summary>API for the editor, to process a position drag from the user.
         /// This implementation adds the delta to the follow offset.</summary>
         /// <param name="delta">The amount dragged this frame</param>
-        public override void OnPositionDragged(Vector3 delta)
-        {
+        public override void OnPositionDragged(Vector3 delta) {
             Quaternion targetOrientation = m_Path.EvaluateOrientationAtUnit(m_PathPosition, m_PositionUnits);
             Vector3 localOffset = Quaternion.Inverse(targetOrientation) * delta;
             m_PathOffset += localOffset;
         }
-        
-        private Quaternion GetTargetOrientationAtPathPoint(Quaternion pathOrientation, Vector3 up)
-        {
-            switch (m_CameraUp)
-            {
+
+        private Quaternion GetTargetOrientationAtPathPoint(Quaternion pathOrientation, Vector3 up) {
+            switch (m_CameraUp) {
                 default:
                 case CameraUpMode.Default: break;
                 case CameraUpMode.Path: return pathOrientation;
-                case CameraUpMode.PathNoRoll: 
+                case CameraUpMode.PathNoRoll:
                     return Quaternion.LookRotation(pathOrientation * Vector3.forward, up);
                 case CameraUpMode.FollowTarget:
                     if (FollowTarget != null)
@@ -288,23 +271,20 @@ namespace Cinemachine
             return Quaternion.LookRotation(transform.rotation * Vector3.forward, up);
         }
 
-        private Vector3 AngularDamping
-        {
-            get 
-            { 
-                switch (m_CameraUp)
-                {
+        private Vector3 AngularDamping {
+            get {
+                switch (m_CameraUp) {
                     case CameraUpMode.PathNoRoll:
                     case CameraUpMode.FollowTargetNoRoll:
-                        return new Vector3(m_PitchDamping, m_YawDamping, 0); 
+                        return new Vector3(m_PitchDamping, m_YawDamping, 0);
                     case CameraUpMode.Default:
                         return Vector3.zero;
                     default:
-                        return new Vector3(m_PitchDamping, m_YawDamping, m_RollDamping); 
+                        return new Vector3(m_PitchDamping, m_YawDamping, m_RollDamping);
                 }
-            } 
+            }
         }
-        
+
         private float m_PreviousPathPosition = 0;
         Quaternion m_PreviousOrientation = Quaternion.identity;
         private Vector3 m_PreviousCameraPosition = Vector3.zero;

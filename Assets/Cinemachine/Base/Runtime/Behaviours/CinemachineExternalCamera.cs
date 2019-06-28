@@ -1,8 +1,7 @@
 using Cinemachine.Utility;
 using UnityEngine;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This component will expose a non-cinemachine camera to the cinemachine system,
     /// allowing it to participate in blends.
@@ -11,8 +10,7 @@ namespace Cinemachine
     [DocumentationSorting(14, DocumentationSortingAttribute.Level.UserRef)]
     [RequireComponent(typeof(Camera)), DisallowMultipleComponent, ExecuteInEditMode]
     [AddComponentMenu("Cinemachine/CinemachineExternalCamera")]
-    public class CinemachineExternalCamera : CinemachineVirtualCameraBase
-    {
+    public class CinemachineExternalCamera : CinemachineVirtualCameraBase {
         /// <summary>The object that the camera is looking at.</summary>
         [Tooltip("The object that the camera is looking at.  Setting this will improve the quality of the blends to and from this camera")]
         [NoSaveDuringPlay]
@@ -25,8 +23,7 @@ namespace Cinemachine
         public override CameraState State { get { return m_State; } }
 
         /// <summary>The object that the camera is looking at</summary>
-        override public Transform LookAt 
-        {
+        override public Transform LookAt {
             get { return m_LookAt; }
             set { m_LookAt = value; }
         }
@@ -35,8 +32,7 @@ namespace Cinemachine
         override public Transform Follow { get; set; }
 
         /// <summary>Construct a CameraState object from the Unity Camera</summary>
-        public override void UpdateCameraState(Vector3 worldUp, float deltaTime)
-        {
+        public override void UpdateCameraState(Vector3 worldUp, float deltaTime) {
             // Get the state from the camera
             if (m_Camera == null)
                 m_Camera = GetComponent<Camera>();
@@ -48,8 +44,7 @@ namespace Cinemachine
             if (m_Camera != null)
                 m_State.Lens = LensSettings.FromCamera(m_Camera);
 
-            if (m_LookAt != null)
-            {
+            if (m_LookAt != null) {
                 m_State.ReferenceLookAt = m_LookAt.transform.position;
                 Vector3 dir = m_State.ReferenceLookAt - State.RawPosition;
                 if (!dir.AlmostZero())

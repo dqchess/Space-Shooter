@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class ExplosionPlatformActivator : MonoBehaviour
-{
+public class ExplosionPlatformActivator : MonoBehaviour {
 
     public GameObject Effect;
     public float TimeDelay = 0;
@@ -12,21 +10,18 @@ public class ExplosionPlatformActivator : MonoBehaviour
     private float currentTime, currentRepeatTime;
     private bool canUpdate;
 
-    void Start()
-    {
+    void Start() {
         currentRepeatTime = DefaultRepeatTime;
         Invoke("Init", TimeDelay);
     }
 
-    void Init()
-    {
+    void Init() {
         canUpdate = true;
         Effect.SetActive(true);
     }
 
-    void Update()
-    {
-        if (!canUpdate || Effect==null)
+    void Update() {
+        if (!canUpdate || Effect == null)
             return;
         currentTime += Time.deltaTime;
         if (currentTime > currentRepeatTime) {
@@ -36,13 +31,11 @@ public class ExplosionPlatformActivator : MonoBehaviour
         }
     }
 
-    void OnTriggerEnter(Collider coll)
-    {
+    void OnTriggerEnter(Collider coll) {
         currentRepeatTime = NearRepeatTime;
     }
 
-    void OnTriggerExit(Collider other)
-    {
+    void OnTriggerExit(Collider other) {
         currentRepeatTime = DefaultRepeatTime;
     }
 }

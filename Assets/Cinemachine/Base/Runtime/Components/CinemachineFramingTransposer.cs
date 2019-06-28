@@ -1,10 +1,9 @@
-using System;
 using Cinemachine.Utility;
+using System;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Cinemachine
-{
+namespace Cinemachine {
     /// <summary>
     /// This is a Cinemachine Component in the Body section of the component pipeline. 
     /// Its job is to position the camera in a fixed screen-space relationship to 
@@ -32,8 +31,7 @@ namespace Cinemachine
     [AddComponentMenu("")] // Don't display in add component menu
     [RequireComponent(typeof(CinemachinePipeline))]
     [SaveDuringPlay]
-    public class CinemachineFramingTransposer : CinemachineComponentBase
-    {
+    public class CinemachineFramingTransposer : CinemachineComponentBase {
         /// <summary>Used by the Inspector Editor to display on-screen guides.</summary>
         [NoSaveDuringPlay, HideInInspector]
         public Action OnGUICallback = null;
@@ -138,8 +136,7 @@ namespace Cinemachine
 
         /// <summary>What screen dimensions to consider when framing</summary>
         [DocumentationSorting(4.01f, DocumentationSortingAttribute.Level.UserRef)]
-        public enum FramingMode
-        {
+        public enum FramingMode {
             /// <summary>Consider only the horizontal dimension.  Vertical framing is ignored.</summary>
             Horizontal,
             /// <summary>Consider only the vertical dimension.  Horizontal framing is ignored.</summary>
@@ -157,8 +154,7 @@ namespace Cinemachine
         public FramingMode m_GroupFramingMode = FramingMode.HorizontalAndVertical;
 
         /// <summary>How to adjust the camera to get the desired framing</summary>
-        public enum AdjustmentMode
-        {
+        public enum AdjustmentMode {
             /// <summary>Do not move the camera, only adjust the FOV.</summary>
             ZoomOnly,
             /// <summary>Just move the camera, don't change the FOV.</summary>
@@ -211,16 +207,13 @@ namespace Cinemachine
         public float m_MaximumOrthoSize = 100;
 
         /// <summary>Internal API for the inspector editor</summary>
-        public Rect SoftGuideRect
-        {
-            get
-            {
+        public Rect SoftGuideRect {
+            get {
                 return new Rect(
                     m_ScreenX - m_DeadZoneWidth / 2, m_ScreenY - m_DeadZoneHeight / 2,
                     m_DeadZoneWidth, m_DeadZoneHeight);
             }
-            set
-            {
+            set {
                 m_DeadZoneWidth = Mathf.Clamp01(value.width);
                 m_DeadZoneHeight = Mathf.Clamp01(value.height);
                 m_ScreenX = Mathf.Clamp01(value.x + m_DeadZoneWidth / 2);
@@ -231,10 +224,8 @@ namespace Cinemachine
         }
 
         /// <summary>Internal API for the inspector editor</summary>
-        public Rect HardGuideRect
-        {
-            get
-            {
+        public Rect HardGuideRect {
+            get {
                 Rect r = new Rect(
                         m_ScreenX - m_SoftZoneWidth / 2, m_ScreenY - m_SoftZoneHeight / 2,
                         m_SoftZoneWidth, m_SoftZoneHeight);
@@ -243,8 +234,7 @@ namespace Cinemachine
                         m_BiasY * (m_SoftZoneHeight - m_DeadZoneHeight));
                 return r;
             }
-            set
-            {
+            set {
                 m_SoftZoneWidth = Mathf.Clamp(value.width, 0, 2f);
                 m_SoftZoneHeight = Mathf.Clamp(value.height, 0, 2f);
                 m_DeadZoneWidth = Mathf.Min(m_DeadZoneWidth, m_SoftZoneWidth);
@@ -259,8 +249,7 @@ namespace Cinemachine
             }
         }
 
-        private void OnValidate()
-        {
+        private void OnValidate() {
             m_CameraDistance = Mathf.Max(m_CameraDistance, kMinimumCameraDistance);
             m_DeadZoneDepth = Mathf.Max(m_DeadZoneDepth, 0);
 
@@ -298,12 +287,10 @@ namespace Cinemachine
         /// <summary>Positions the virtual camera according to the transposer rules.</summary>
         /// <param name="curState">The current camera state</param>
         /// <param name="deltaTime">Used for damping.  If less than 0, no damping is done.</param>
-        public override void MutateCameraState(ref CameraState curState, float deltaTime)
-        {
-            if (deltaTime < 0)
-            {
+        public override void MutateCameraState(ref CameraState curState, float deltaTime) {
+            if (deltaTime < 0) {
                 m_Predictor.Reset();
-                m_PreviousCameraPosition = curState.RawPosition 
+                m_PreviousCameraPosition = curState.RawPosition
                     + (curState.RawOrientation * Vector3.back) * m_CameraDistance;
             }
             if (!IsValid)
@@ -314,7 +301,7 @@ namespace Cinemachine
             curState.ReferenceLookAt = FollowTarget.position;
             m_Predictor.Smoothing = m_LookaheadSmoothing;
             m_Predictor.AddPosition(curState.ReferenceLookAt);
-            TrackedPoint = (m_LookaheadTime > 0) 
+            TrackedPoint = (m_LookaheadTime > 0)
                 ? m_Predictor.PredictPosition(m_LookaheadTime) : curState.ReferenceLookAt;
 
             // Work in camera-local space
@@ -325,8 +312,8 @@ namespace Cinemachine
 
             // Move along camera z
             Vector3 cameraOffset = Vector3.zero;
-            float cameraMin = Mathf.Max(kMinimumCameraDistance, m_CameraDistance - m_DeadZoneDepth/2);
-            float cameraMax = Mathf.Max(cameraMin, m_CameraDistance + m_DeadZoneDepth/2);
+            float cameraMin = Mathf.Max(kMinimumCameraDistance, m_CameraDistance - m_DeadZoneDepth / 2);
+            float cameraMax = Mathf.Max(cameraMin, m_CameraDistance + m_DeadZoneDepth / 2);
             if (targetPos.z < cameraMin)
                 cameraOffset.z = targetPos.z - cameraMin;
             if (targetPos.z > cameraMax)
@@ -340,25 +327,21 @@ namespace Cinemachine
 
             // Move along the XY plane
             targetPos.z -= cameraOffset.z;
-            float screenSize = curState.Lens.Orthographic 
-                ? curState.Lens.OrthographicSize 
+            float screenSize = curState.Lens.Orthographic
+                ? curState.Lens.OrthographicSize
                 : Mathf.Tan(0.5f * curState.Lens.FieldOfView * Mathf.Deg2Rad) * targetPos.z;
             Rect softGuideOrtho = ScreenToOrtho(SoftGuideRect, screenSize, curState.Lens.Aspect);
-            if (deltaTime < 0)
-            {
+            if (deltaTime < 0) {
                 // No damping or hard bounds, just snap to central bounds, skipping the soft zone
                 Rect rect = new Rect(softGuideOrtho.center, Vector2.zero); // Force to center
                 cameraOffset += OrthoOffsetToScreenBounds(targetPos, rect);
-            }
-            else
-            {
+            } else {
                 // Move it through the soft zone
                 cameraOffset += OrthoOffsetToScreenBounds(targetPos, softGuideOrtho);
 
                 // Find where it intersects the hard zone
                 Vector3 hard = Vector3.zero;
-                if (!m_UnlimitedSoftZone)
-                {
+                if (!m_UnlimitedSoftZone) {
                     Rect hardGuideOrtho = ScreenToOrtho(HardGuideRect, screenSize, curState.Lens.Aspect);
                     hard = OrthoOffsetToScreenBounds(targetPos, hardGuideOrtho);
                     float t = Mathf.Max(hard.x / (cameraOffset.x + Epsilon), hard.y / (cameraOffset.y + Epsilon));
@@ -373,18 +356,16 @@ namespace Cinemachine
         }
 
         // Convert from screen coords to normalized orthographic distance coords
-        private Rect ScreenToOrtho(Rect rScreen, float orthoSize, float aspect)
-        {
+        private Rect ScreenToOrtho(Rect rScreen, float orthoSize, float aspect) {
             Rect r = new Rect();
-            r.yMax = 2 * orthoSize * ((1f-rScreen.yMin) - 0.5f);
-            r.yMin = 2 * orthoSize * ((1f-rScreen.yMax) - 0.5f);
+            r.yMax = 2 * orthoSize * ((1f - rScreen.yMin) - 0.5f);
+            r.yMin = 2 * orthoSize * ((1f - rScreen.yMax) - 0.5f);
             r.xMin = 2 * orthoSize * aspect * (rScreen.xMin - 0.5f);
             r.xMax = 2 * orthoSize * aspect * (rScreen.xMax - 0.5f);
             return r;
         }
 
-        private Vector3 OrthoOffsetToScreenBounds(Vector3 targetPos2D, Rect screenRect)
-        {
+        private Vector3 OrthoOffsetToScreenBounds(Vector3 targetPos2D, Rect screenRect) {
             // Bring it to the edge of screenRect, if outside.  Leave it alone if inside.
             Vector3 delta = Vector3.zero;
             if (targetPos2D.x < screenRect.xMin)
@@ -407,10 +388,8 @@ namespace Cinemachine
         public Matrix4x4 m_lastBoundsMatrix { get; private set; }
 
         /// <summary>Get Follow target as CinemachineTargetGroup, or null if target is not a group</summary>
-        public CinemachineTargetGroup TargetGroup 
-        { 
-            get
-            {
+        public CinemachineTargetGroup TargetGroup {
+            get {
                 Transform follow = FollowTarget;
                 if (follow != null)
                     return follow.GetComponent<CinemachineTargetGroup>();
@@ -419,9 +398,8 @@ namespace Cinemachine
         }
 
         float AdjustCameraDepthAndLensForGroupFraming(
-            CinemachineTargetGroup group, float targetZ, 
-            ref CameraState curState, float deltaTime)
-        {
+            CinemachineTargetGroup group, float targetZ,
+            ref CameraState curState, float deltaTime) {
             float cameraOffset = 0;
 
             // Get the bounding box from that POV in view space, and find its height
@@ -434,8 +412,7 @@ namespace Cinemachine
             float targetHeight = GetTargetHeight(m_LastBounds);
 
             // Apply damping
-            if (deltaTime >= 0)
-            {
+            if (deltaTime >= 0) {
                 float delta = targetHeight - m_prevTargetHeight;
                 delta = Damper.Damp(delta, m_ZDamping, deltaTime);
                 targetHeight = m_prevTargetHeight + delta;
@@ -443,10 +420,9 @@ namespace Cinemachine
             m_prevTargetHeight = targetHeight;
 
             // Move the camera
-            if (!curState.Lens.Orthographic && m_AdjustmentMode != AdjustmentMode.ZoomOnly)
-            {
+            if (!curState.Lens.Orthographic && m_AdjustmentMode != AdjustmentMode.ZoomOnly) {
                 // What distance would be needed to get the target height, at the current FOV
-                float desiredDistance 
+                float desiredDistance
                     = targetHeight / (2f * Mathf.Tan(curState.Lens.FieldOfView * Mathf.Deg2Rad / 2f));
 
                 // target the near surface of the bounding box
@@ -462,8 +438,7 @@ namespace Cinemachine
             }
 
             // Apply zoom
-            if (curState.Lens.Orthographic || m_AdjustmentMode != AdjustmentMode.DollyOnly)
-            {
+            if (curState.Lens.Orthographic || m_AdjustmentMode != AdjustmentMode.DollyOnly) {
                 float nearBoundsDistance = (targetZ + cameraOffset) - m_LastBounds.extents.z;
                 float currentFOV = 179;
                 if (nearBoundsDistance > Epsilon)
@@ -477,11 +452,9 @@ namespace Cinemachine
             return -cameraOffset;
         }
 
-        float GetTargetHeight(Bounds b)
-        {
+        float GetTargetHeight(Bounds b) {
             float framingSize = Mathf.Max(Epsilon, m_GroupFramingSize);
-            switch (m_GroupFramingMode)
-            {
+            switch (m_GroupFramingMode) {
                 case FramingMode.Horizontal:
                     return b.size.x / (framingSize * VcamState.Lens.Aspect);
                 case FramingMode.Vertical:
@@ -489,7 +462,7 @@ namespace Cinemachine
                 default:
                 case FramingMode.HorizontalAndVertical:
                     return Mathf.Max(
-                        b.size.x / (framingSize * VcamState.Lens.Aspect), 
+                        b.size.x / (framingSize * VcamState.Lens.Aspect),
                         b.size.y / framingSize);
             }
         }

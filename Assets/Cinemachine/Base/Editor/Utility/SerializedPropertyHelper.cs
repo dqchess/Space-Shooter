@@ -2,10 +2,8 @@ using System;
 using System.Linq.Expressions;
 using UnityEditor;
 
-namespace Cinemachine.Editor
-{
-    public static class SerializedPropertyHelper
-    {
+namespace Cinemachine.Editor {
+    public static class SerializedPropertyHelper {
         /// This is a way to get a field name string in such a manner that the compiler will
         /// generate errors for invalid fields.  Much better than directly using strings.
         /// Usage: instead of
@@ -17,11 +15,9 @@ namespace Cinemachine.Editor
         /// MyClass myclass = null;
         /// SerializedPropertyHelper.PropertyName( () => myClass.m_MyField);
         /// </example>
-        public static string PropertyName(Expression<Func<object>> exp)
-        {
+        public static string PropertyName(Expression<Func<object>> exp) {
             var body = exp.Body as MemberExpression;
-            if (body == null)
-            {
+            if (body == null) {
                 var ubody = (UnaryExpression)exp.Body;
                 body = ubody.Operand as MemberExpression;
             }
@@ -37,8 +33,7 @@ namespace Cinemachine.Editor
         /// MyClass myclass = null;
         /// mySerializedObject.FindProperty( () => myClass.m_MyField);
         /// </example>
-        public static SerializedProperty FindProperty(this SerializedObject obj, Expression<Func<object>> exp)
-        {
+        public static SerializedProperty FindProperty(this SerializedObject obj, Expression<Func<object>> exp) {
             return obj.FindProperty(PropertyName(exp));
         }
 
@@ -51,8 +46,7 @@ namespace Cinemachine.Editor
         /// MyClass myclass = null;
         /// mySerializedProperty.FindPropertyRelative( () => myClass.m_MyField);
         /// </example>
-        public static SerializedProperty FindPropertyRelative(this SerializedProperty obj, Expression<Func<object>> exp)
-        {
+        public static SerializedProperty FindPropertyRelative(this SerializedProperty obj, Expression<Func<object>> exp) {
             return obj.FindPropertyRelative(PropertyName(exp));
         }
     }

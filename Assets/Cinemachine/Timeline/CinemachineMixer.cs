@@ -1,24 +1,20 @@
 using UnityEngine;
 using UnityEngine.Playables;
 
-namespace Cinemachine.Timeline
-{
-    public sealed class CinemachineMixer : PlayableBehaviour
-    {
+namespace Cinemachine.Timeline {
+    public sealed class CinemachineMixer : PlayableBehaviour {
         // The brain that this track controls
         private CinemachineBrain mBrain;
         private int mBrainOverrideId = -1;
         private bool mPlaying;
 
-        public override void OnGraphStop(Playable playable)
-        {
+        public override void OnGraphStop(Playable playable) {
             if (mBrain != null)
                 mBrain.ReleaseCameraOverride(mBrainOverrideId); // clean up
             mBrainOverrideId = -1;
         }
 
-        public override void ProcessFrame(Playable playable, FrameData info, object playerData)
-        {
+        public override void ProcessFrame(Playable playable, FrameData info, object playerData) {
             base.ProcessFrame(playable, info, playerData);
 
             // Get the brain that this track controls.
@@ -38,15 +34,13 @@ namespace Cinemachine.Timeline
             ICinemachineCamera camA = null;
             ICinemachineCamera camB = null;
             float camWeight = 1f;
-            for (int i = 0; i < playable.GetInputCount(); ++i)
-            {
+            for (int i = 0; i < playable.GetInputCount(); ++i) {
                 CinemachineShotPlayable shot
                     = ((ScriptPlayable<CinemachineShotPlayable>)playable.GetInput(i)).GetBehaviour();
                 float weight = playable.GetInputWeight(i);
                 if (shot != null && shot.VirtualCamera != null
                     && playable.GetPlayState() == PlayState.Playing
-                    && weight > 0.0001f)
-                {
+                    && weight > 0.0001f) {
                     if (activeInputs == 1)
                         camB = camA;
                     camWeight = weight;
@@ -58,8 +52,7 @@ namespace Cinemachine.Timeline
             }
 
             float deltaTime = info.deltaTime;
-            if (!mPlaying)
-            {
+            if (!mPlaying) {
                 if (mBrainOverrideId < 0)
                     mLastOverrideFrame = -1;
                 float time = Time.realtimeSinceStartup;
@@ -76,8 +69,7 @@ namespace Cinemachine.Timeline
         }
         float mLastOverrideFrame;
 
-        public override void PrepareFrame(Playable playable, FrameData info)
-        {
+        public override void PrepareFrame(Playable playable, FrameData info) {
             mPlaying = info.evaluationType == FrameData.EvaluationType.Playback;
         }
     }
