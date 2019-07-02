@@ -47,9 +47,9 @@ public class Boss : MonoBehaviour {
     private string levelName;
     private Health health;
 
-    private float boss1Health = 500f;
-    private float boss2Health = 750f;
-    private float boss3Health = 900f;
+    private float boss1Health = 850f;
+    private float boss2Health = 1050f;
+    private float boss3Health = 1250f;
 
     // Start is called before the first frame update
     void Start() {

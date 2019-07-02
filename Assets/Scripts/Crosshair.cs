@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Crosshair : MonoBehaviour {
 
-    [SerializeField] float crosshairMovementSpeed = 500f;
+    [SerializeField] float crosshairMovementSpeed = 800f;
 
     [Header("Joystick Configurations")]
     [SerializeField] Joystick joystick;
@@ -13,6 +13,16 @@ public class Crosshair : MonoBehaviour {
 
     private float x;
     private float y;
+    private float sensitivity;
+    private float multiplier;
+    private void Start() {
+        sensitivity = PlayerPrefs.GetFloat("AimingSensitivity", 0.30f);
+
+        multiplier = Mathf.Clamp(sensitivity, 0.1f, 2f);
+
+        crosshairMovementSpeed *= multiplier;
+        
+    }
 
     // Update is called once per frame
     void Update() {
@@ -20,9 +30,6 @@ public class Crosshair : MonoBehaviour {
     }
 
     private void MoveCrosshair() {
-
-        Vector3 currentPosition = transform.position;
-
 
         if (joystick.Horizontal >= horizontalJoystickThreshold) {
             x = joystick.Horizontal * crosshairMovementSpeed * Time.deltaTime;
@@ -39,25 +46,12 @@ public class Crosshair : MonoBehaviour {
         } else {
             y = 0;
         }
-        /*
-       // Restrict crosshair movement to viewport
-        if (currentPosition.x + x >= 40) {
-            x = 0;
-        }
 
-        if (currentPosition.x + x <= -40) {
-            x = 0;
-        }
+        Vector3 position = transform.position;
 
-        if (currentPosition.y + y <= -9) {
-            y = 0;
-        }
+        position.x = Mathf.Clamp(position.x + x, 0f, Screen.width);
+        position.y = Mathf.Clamp(position.y + y, 0f, Screen.height);
 
-        if (currentPosition.y + y >= 29) {
-            y = 0;
-        }
-        */
-        transform.Translate(x, y, 0, Space.World);
+        transform.position = position;
     }
-
 }

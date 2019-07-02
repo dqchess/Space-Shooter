@@ -11,17 +11,7 @@
       </intent-filter>
       <meta-data android:name="unityplayer.UnityActivity" android:value="true" />
     </activity>
-
-
-    <provider
-      android:name="com.yasirkula.unity.UnitySSContentProvider"
-      android:authorities="spaceshooter"
-      android:exported="false"
-      android:grantUriPermissions="true" />
+    <provider android:name="com.yasirkula.unity.UnitySSContentProvider" android:authorities="spaceshooter" android:exported="false" android:grantUriPermissions="true" />
     <service android:name="com.google.firebase.messaging.MessageForwardingService" android:exported="false" />
-        
-       
-   
-        
   </application>
 </manifest>

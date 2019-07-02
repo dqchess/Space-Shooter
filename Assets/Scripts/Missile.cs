@@ -36,11 +36,15 @@ public class Missile : MonoBehaviour {
         if (transform.CompareTag("Player")) {
             damage = playerMissileDamage;
             target = transform.forward * -1000;
+            GetComponent<ParticleSystem>().Play();
+
+
         } else {
             if (player != null) { // To avoid NullReferenceExpection when player is destroyed
                 SetEnemyProjectileSpeedAndTarget();
             }
         }
+
     }
 
     private void SetEnemyProjectileSpeedAndTarget() {

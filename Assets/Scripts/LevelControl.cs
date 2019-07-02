@@ -41,8 +41,6 @@ public class LevelControl : MonoBehaviour {
         PlayerPrefs.SetInt("LevelsUnlocked", levelUnlocked);
         
         player.StopFire();
-        player.SetAimAssistLineIsVisible(false);
-        player.SetIdleAnimation();
 
         // If last level, add score to leaderboard
         float score = FindObjectOfType<Score>().GetScore();

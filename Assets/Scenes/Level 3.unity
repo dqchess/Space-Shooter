@@ -342,62 +342,62 @@ PrefabInstance:
     - target: {fileID: 3873082607280862398, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.00014803142
+      value: 0.0001476043
       objectReference: {fileID: 0}
     - target: {fileID: 3873082607280862398, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9906457
+      value: 0.99064595
       objectReference: {fileID: 0}
     - target: {fileID: 3873082607280862398, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.13645518
+      value: -0.13645364
       objectReference: {fileID: 0}
     - target: {fileID: 3873082607280862398, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.0010699861
+      value: 0.0010668964
       objectReference: {fileID: 0}
     - target: {fileID: 3873082606309931031, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.067275025
+      value: 0.067274876
       objectReference: {fileID: 0}
     - target: {fileID: 3873082606309931031, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.034696
+      value: -0.03476471
       objectReference: {fileID: 0}
     - target: {fileID: 3873082606309931031, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.002335711
+      value: 0.0023403692
       objectReference: {fileID: 0}
     - target: {fileID: 3873082606309931031, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9971283
+      value: 0.9971259
       objectReference: {fileID: 0}
     - target: {fileID: 7344229682380960790, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.00014803142
+      value: 0.0001476043
       objectReference: {fileID: 0}
     - target: {fileID: 7344229682380960790, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9906457
+      value: 0.99064595
       objectReference: {fileID: 0}
     - target: {fileID: 7344229682380960790, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.13645518
+      value: -0.13645364
       objectReference: {fileID: 0}
     - target: {fileID: 7344229682380960790, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.0010699861
+      value: 0.0010668964
       objectReference: {fileID: 0}
     - target: {fileID: 3873082605861376208, guid: 9f72905578b59454db240d442ee4fd2e,
         type: 3}
@@ -771,6 +771,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cecce8d3f549de045bea5fd79de9e7cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1184257664 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 728804305, guid: 8b99379fdb93cf8469cdc5bb3634930b,
+    type: 3}
+  m_PrefabInstance: {fileID: 1184257661}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1184257665 stripped
@@ -1305,6 +1317,14 @@ PrefabInstance:
       propertyPath: m_ExposedReferences.m_References.Array.data[10].second
       value: 
       objectReference: {fileID: 1321684733}
+    - target: {fileID: 2043882315, guid: 2b3786a369eb3c142b6f626c0f9d0d5e, type: 3}
+      propertyPath: crosshair
+      value: 
+      objectReference: {fileID: 1184257664}
+    - target: {fileID: 215517620, guid: 2b3786a369eb3c142b6f626c0f9d0d5e, type: 3}
+      propertyPath: crosshair
+      value: 
+      objectReference: {fileID: 1184257664}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b3786a369eb3c142b6f626c0f9d0d5e, type: 3}
 --- !u!114 &2045707620 stripped

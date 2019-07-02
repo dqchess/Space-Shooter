@@ -7,6 +7,7 @@ public class PlayerPreferences : MonoBehaviour {
     [SerializeField] Slider sfxSlider;
     [SerializeField] Dropdown difficulty;
     [SerializeField] Slider vibrationSensitivitySlider;
+    [SerializeField] Slider aimingSensitivitySlider;
 
     // Start is called before the first frame update
     void Start() {
@@ -14,6 +15,7 @@ public class PlayerPreferences : MonoBehaviour {
         sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", 1f);
         difficulty.value = PlayerPrefs.GetInt("Difficulty", 1);
         vibrationSensitivitySlider.value = PlayerPrefs.GetFloat("VibrationSensitivity", 1f);
+        aimingSensitivitySlider.value = PlayerPrefs.GetFloat("AimingSensitivity", 0.30f);
     }
 
     public void SetMusicVolume(float volume) {
@@ -30,7 +32,10 @@ public class PlayerPreferences : MonoBehaviour {
     }
 
     public void SetVibrationSensitivity(float sensitivity) {
-        Debug.Log("Sensitivity: " + sensitivity);
         PlayerPrefs.SetFloat("VibrationSensitivity", sensitivity);
+    }
+
+    public void SetAimingSensitivity(float sensitivity) {
+        PlayerPrefs.SetFloat("AimingSensitivity", sensitivity);
     }
 }

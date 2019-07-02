@@ -7,7 +7,6 @@ public class EnemySpawner : MonoBehaviour {
 
     [Header("Movement Configurations")]
     [SerializeField] List<WaypointConfig> waveConfigs;
-    [SerializeField] List<GameObject> aimHelperPlanes;
     [SerializeField] int startingWave = 0;
     [SerializeField] bool looping = true;
     [SerializeField] float delayBetweenWaves = 1f;
@@ -78,7 +77,6 @@ public class EnemySpawner : MonoBehaviour {
 
     private IEnumerator SpawnAllWaves() {
         for (int waveIndex = startingWave; waveIndex < waveConfigs.Count; waveIndex++) {
-            GameObject plane = Instantiate(aimHelperPlanes[waveIndex]);
             var currentWave = waveConfigs[waveIndex];
 
             int num = FindObjectsOfType<EnemyPathing>().Length; // Find number of enemies on the screen.
@@ -89,7 +87,6 @@ public class EnemySpawner : MonoBehaviour {
                 // Debug.Log("Waiting done! Now Spawning...");
             }
             yield return StartCoroutine(SpawnAllEnemiesInWave(currentWave));
-            Destroy(plane);
         }
     }
 

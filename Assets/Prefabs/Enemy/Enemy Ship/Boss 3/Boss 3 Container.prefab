@@ -60,13 +60,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa56b123a01f9e14e9fadc9a33059a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 900
+  health: 1250
   explosionPrefab: {fileID: 141060, guid: d82dc02ce1454d547abb75973937b38a, type: 3}
   delayBeforeDestroy: 0.1
   delayBeforeVFXDestroy: 5
   healthText: {fileID: 0}
-  audioSource: {fileID: 4482674873329786804}
-  clip: {fileID: 0}
 --- !u!114 &450957228631208314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -107,7 +105,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 2c1b8129805e34099889885a5cb8bb19, type: 3}
+  m_audioClip: {fileID: 8300000, guid: 9c45913e69cbb4cb190d8d8a6e83738b, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
