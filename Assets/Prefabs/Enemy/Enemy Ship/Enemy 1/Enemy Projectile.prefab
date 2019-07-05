@@ -66,7 +66,7 @@ Rigidbody:
   serializedVersion: 2
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 0
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   impactParticle: {fileID: 106912, guid: 4c6dbb08de5abb84a9e7c01b4e0213ca, type: 3}
-  projectileParticle: {fileID: 196044, guid: e95a7700630bc504696faca51f4dce9f, type: 3}
+  projectileParticle: {fileID: 177564, guid: d43c8b7e0966af84e979d4299c0a667e, type: 3}
   muzzleParticle: {fileID: 178870, guid: 9b26fa2878b249e4fa6b5ce4c8af718b, type: 3}
   trailParticles: []
   impactNormal: {x: 0, y: 0, z: 0}

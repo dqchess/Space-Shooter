@@ -15,13 +15,14 @@ public class Crosshair : MonoBehaviour {
     private float y;
     private float sensitivity;
     private float multiplier;
+
     private void Start() {
         sensitivity = PlayerPrefs.GetFloat("AimingSensitivity", 0.30f);
 
-        multiplier = Mathf.Clamp(sensitivity, 0.1f, 2f);
+        multiplier = Mathf.Clamp(sensitivity, 0.01f, 1f);
 
         crosshairMovementSpeed *= multiplier;
-        
+
     }
 
     // Update is called once per frame
@@ -32,17 +33,17 @@ public class Crosshair : MonoBehaviour {
     private void MoveCrosshair() {
 
         if (joystick.Horizontal >= horizontalJoystickThreshold) {
-            x = joystick.Horizontal * crosshairMovementSpeed * Time.deltaTime;
+            x = joystick.Horizontal * crosshairMovementSpeed;
         } else if (joystick.Horizontal <= horizontalJoystickThreshold) {
-            x = joystick.Horizontal * crosshairMovementSpeed * Time.deltaTime;
+            x = joystick.Horizontal * crosshairMovementSpeed;
         } else {
             x = 0;
         }
 
         if (joystick.Vertical >= verticalJoystickThreshold) {
-            y = joystick.Vertical * crosshairMovementSpeed * Time.deltaTime;
+            y = joystick.Vertical * crosshairMovementSpeed;
         } else if (joystick.Vertical <= verticalJoystickThreshold) {
-            y = joystick.Vertical * crosshairMovementSpeed * Time.deltaTime;
+            y = joystick.Vertical * crosshairMovementSpeed;
         } else {
             y = 0;
         }
@@ -54,4 +55,5 @@ public class Crosshair : MonoBehaviour {
 
         transform.position = position;
     }
+
 }

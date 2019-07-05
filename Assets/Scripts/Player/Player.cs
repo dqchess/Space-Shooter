@@ -40,7 +40,7 @@ public class Player : MonoBehaviour {
     private bool canFire = true;
     private bool isPlayerReady = false;
     private bool isPowerUpActive = false;
-
+    private bool disableJoystickInput = false;
     private PowerUpSpawner powerUpSpawner;
     private Coins coins;
 
@@ -50,6 +50,9 @@ public class Player : MonoBehaviour {
     private GameObject bot3;
     private GameObject bot4;
     private float playerMovementSpeed;
+    private Vector3 movementDirection;
+    private Vector3 velocityVector;
+    private float playerDeadZone;
 
     [SerializeField] GameObject bot1Prefab;
     [SerializeField] GameObject bot2Prefab;
@@ -62,6 +65,7 @@ public class Player : MonoBehaviour {
         powerUpSpawner = FindObjectOfType<PowerUpSpawner>();
         coins = FindObjectOfType<Coins>();
 
+        playerDeadZone = 20f    ;
     }
 
     void Update() {
@@ -89,6 +93,7 @@ public class Player : MonoBehaviour {
             // Move the player ship to the stating position
             transform.position = Vector3.MoveTowards(transform.position, new Vector3(0f, 0f, 0f), playerMovementSpeed * Time.deltaTime);
         }
+
     }
 
     private void FireContinueously() {
@@ -127,31 +132,46 @@ public class Player : MonoBehaviour {
 
     private void Move() {
 
-        Vector3 currentPosition = transform.position;
+        if (!disableJoystickInput) {
+            if (joystick.Horizontal >= horizontalJoystickThreshold) {
+                x = joystick.Horizontal * playerMovementSpeed;
+            } else if (joystick.Horizontal <= horizontalJoystickThreshold) {
+                x = joystick.Horizontal * playerMovementSpeed;
+            } else {
+                x = 0;
+            }
 
-        if (joystick.Horizontal >= horizontalJoystickThreshold) {
-            x = joystick.Horizontal * playerMovementSpeed * Time.deltaTime;
-        } else if (joystick.Horizontal <= horizontalJoystickThreshold) {
-            x = joystick.Horizontal * playerMovementSpeed * Time.deltaTime;
-        } else {
-            x = 0;
+            if (joystick.Vertical >= verticalJoystickThreshold) {
+                y = joystick.Vertical * playerMovementSpeed;
+            } else if (joystick.Vertical <= verticalJoystickThreshold) {
+                y = joystick.Vertical * playerMovementSpeed;
+            } else {
+                y = 0;
+            }
+
+            ClampPlayer();
         }
+    }
 
-        if (joystick.Vertical >= verticalJoystickThreshold) {
-            y = joystick.Vertical * playerMovementSpeed * Time.deltaTime;
-        } else if (joystick.Vertical <= verticalJoystickThreshold) {
-            y = joystick.Vertical * playerMovementSpeed * Time.deltaTime;
-        } else {
-            y = 0;
-        }
-
-
+    private void ClampPlayer() {
+        movementDirection = new Vector3(x, y, 0);
 
         Vector3 position = Camera.main.WorldToScreenPoint(transform.position);
-        position.x = Mathf.Clamp(position.x + x, 0f, Screen.width);
-        position.y = Mathf.Clamp(position.y + y, 0f, Screen.height);
+        position.x = Mathf.Clamp(position.x + x, playerDeadZone, Screen.width - playerDeadZone);
+        position.y = Mathf.Clamp(position.y + y, playerDeadZone, Screen.height - playerDeadZone);
+
+
+        velocityVector = movementDirection * playerMovementSpeed;
         transform.position = Camera.main.ScreenToWorldPoint(position);
 
+    }
+
+    public void DisableJoystickInput() {
+        disableJoystickInput = true;
+    }
+
+    public Vector3 GetVelocityVector() {
+        return velocityVector;
     }
 
     public bool IsPlayerReady() {
@@ -162,10 +182,8 @@ public class Player : MonoBehaviour {
         return playerMovementSpeed;
     }
 
-    public void SetIdleAnimation() {
-        //animator.Play(idleHash);
-
-
+    public void SetPlayerSpeed(float speed) {
+        playerMovementSpeed = speed;
     }
 
     public void ResetForNextLevel() {
@@ -218,28 +236,34 @@ public class Player : MonoBehaviour {
 
 
     public void PurchaseBot1() {
-        Debug.Log("Purchasing Bot 1");
         if (bot1 == null) {
             bot1 = Spawn(bot1Prefab, botPosition1, drone1Coins);
+            bot1.GetComponent<PlayerBot>().SetPosition(1);
         } else if (bot2 == null) {
             bot2 = Spawn(bot1Prefab, botPosition2, drone1Coins);
+            bot2.GetComponent<PlayerBot>().SetPosition(2);
         } else if (bot3 == null) {
             bot3 = Spawn(bot1Prefab, botPosition3, drone1Coins);
+            bot3.GetComponent<PlayerBot>().SetPosition(3);
         } else if (bot4 == null) {
             bot4 = Spawn(bot1Prefab, botPosition4, drone1Coins);
+            bot4.GetComponent<PlayerBot>().SetPosition(4);
         }
     }
 
     public void PurchaseBot2() {
-        Debug.Log("Purchasing Bot 2");
         if (bot1 == null) {
             bot1 = Spawn(bot2Prefab, botPosition1, drone2Coins);
+            bot1.GetComponent<PlayerBot>().SetPosition(1);
         } else if (bot2 == null) {
             bot2 = Spawn(bot2Prefab, botPosition2, drone2Coins);
+            bot2.GetComponent<PlayerBot>().SetPosition(2);
         } else if (bot3 == null) {
             bot3 = Spawn(bot2Prefab, botPosition3, drone2Coins);
+            bot3.GetComponent<PlayerBot>().SetPosition(3);
         } else if (bot4 == null) {
             bot4 = Spawn(bot2Prefab, botPosition4, drone2Coins);
+            bot4.GetComponent<PlayerBot>().SetPosition(4);
         }
     }
 
@@ -248,5 +272,9 @@ public class Player : MonoBehaviour {
         botSpawned.GetComponent<PlayerBot>().SetTargetPosition(position);
         coins.SubtractCoins(price);
         return botSpawned;
+    }
+
+    public bool GetCanFire() {
+        return canFire;
     }
 }

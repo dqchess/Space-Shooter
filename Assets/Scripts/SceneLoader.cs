@@ -44,7 +44,6 @@ public class SceneLoader : MonoBehaviour {
 
         while (!operation.isDone) {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
-            Debug.Log("progress: " + progress);
 
             loading.value = progress;
             percentage.text = (progress * 100).ToString("F0") + "%";

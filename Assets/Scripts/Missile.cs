@@ -29,22 +29,31 @@ public class Missile : MonoBehaviour {
     private Vector3 target;
     private float projectileSpeed = 10f; // Default speed
     private float damage;
+    private Rigidbody rigidbody;
 
     void Start() {
         player = FindObjectOfType<Player>();
         difficulty = FindObjectOfType<GameSession>().GetDifficulty();
+        rigidbody = GetComponent<Rigidbody>();
         if (transform.CompareTag("Player")) {
             damage = playerMissileDamage;
             target = transform.forward * -1000;
-            GetComponent<ParticleSystem>().Play();
+
+            if (GetComponent<ParticleSystem>() != null) {
+                GetComponent<ParticleSystem>().Play();
+            }
+
 
 
         } else {
             if (player != null) { // To avoid NullReferenceExpection when player is destroyed
                 SetEnemyProjectileSpeedAndTarget();
+                Vector3 playerVelocityVector = player.GetVelocityVector();
+                //Vector3 missileVelocityVector = target * projectileSpeed;
+                //target += playerVelocityVector;
+                projectileSpeed += (playerVelocityVector.magnitude * 0.1f);
             }
         }
-
     }
 
     private void SetEnemyProjectileSpeedAndTarget() {
@@ -61,12 +70,12 @@ public class Missile : MonoBehaviour {
             damage = damageMedium;
             transform.LookAt(player.transform);
             projectileSpeed = mediumProjectileSpeed;
-            target = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+            target = player.transform.position - transform.position;
         } else if (difficulty == GameSession.Hard) {
             damage = damageHard;
             transform.LookAt(player.transform);
             projectileSpeed = hardProjectileSpeed;
-            target = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z);
+            target = player.transform.position - transform.position;
         }
 
     }
@@ -80,17 +89,15 @@ public class Missile : MonoBehaviour {
         }
 
         if (transform.CompareTag("Enemy") || transform.CompareTag("Boss")) {
-            transform.position = Vector3.MoveTowards(transform.position, target, projectileSpeed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, target) <= 0.05f) {
-                Destroy(gameObject);
-            }
+            //transform.position = Vector3.MoveTowards(transform.position, target, projectileSpeed * Time.deltaTime);
+            rigidbody.velocity = transform.forward * projectileSpeed;
+            //if (Vector3.Distance(transform.position, target) <= 0.05f) {
+            //    Destroy(gameObject);
+            //}
         }
     }
 
     private void OnTriggerEnter(Collider other) {
-        if (gameObject.CompareTag("Player")) {
-            Debug.Log("Player missile hit: " + other.gameObject.name);
-        }
         try { // If collider is on parent.
             if (!other.CompareTag("Shield")) {
                 other.GetComponent<Health>().ReduceHealth(damage);

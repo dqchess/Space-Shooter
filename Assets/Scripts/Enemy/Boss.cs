@@ -47,9 +47,13 @@ public class Boss : MonoBehaviour {
     private string levelName;
     private Health health;
 
-    private float boss1Health = 850f;
-    private float boss2Health = 1050f;
-    private float boss3Health = 1250f;
+    private float boss1Health = 1250f;
+    private float boss2Health = 1450f;
+    private float boss3Health = 1650f;
+
+
+    private Vector3 movementDirection;
+    private float speed;
 
     // Start is called before the first frame update
     void Start() {
@@ -94,7 +98,6 @@ public class Boss : MonoBehaviour {
     }
 
     private void UpdateHealthUI() {
-        Debug.Log("Boss Name" + gameObject.name);
         if (gameObject.name == "Boss 1 Container(Clone)") {
             image.fillAmount = health.GetHealth() / boss1Health;
         } else if (gameObject.name == "Boss 2 Container(Clone)") {
@@ -107,6 +110,12 @@ public class Boss : MonoBehaviour {
     private void Move() {
         Vector3 targetPosition = waypointPrefab.transform.GetChild(waypointIndex).position;
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * movementSpeed);
+
+        if (waypointIndex > 0) {
+            movementDirection = waypointPrefab.transform.GetChild(waypointIndex).position - waypointPrefab.transform.GetChild(waypointIndex - 1).position;
+        }
+
+
         if (Vector3.Distance(transform.position, targetPosition) <= 0.05f) {
             waypointIndex = waypointIndex % (waypointPrefab.transform.childCount - 1) + 1;
         }
@@ -156,4 +165,13 @@ public class Boss : MonoBehaviour {
     public float GetBossKillScore() {
         return playerPoints;
     }
+
+    public float GetSpeed() {
+        return speed;
+    }
+
+    public Vector3 GetVelocityVector() {
+        return movementDirection;
+    }
+
 }

@@ -9,8 +9,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: skybox
   m_Shader: {fileID: 104, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _SUNDISK_HIGH_QUALITY
-  m_LightmapFlags: 5
+  m_ShaderKeywords: _EMISSION _SUNDISK_HIGH_QUALITY
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -87,7 +87,9 @@ Material:
     - _DstBlend: 0
     - _DustAmount: 0.5
     - _Exposure: 1
+    - _GlossMapScale: 1
     - _Glossiness: 0.5
+    - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
     - _Nebular1Strength: 0
@@ -97,6 +99,8 @@ Material:
     - _Parallax: 0.02
     - _Rotation: 0
     - _Seed: 1
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SunDisk: 2
     - _SunSize: 0.04

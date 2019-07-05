@@ -6,6 +6,8 @@ public class EnemyPathing : MonoBehaviour {
     private WaypointConfig waveConfig;
     private List<Transform> waypoints;
     private int waypointIndex = 0;
+    private Vector3 movementDirection;
+    private float speed;
 
     // Use this for initialization
     void Start() {
@@ -25,7 +27,13 @@ public class EnemyPathing : MonoBehaviour {
     private void Move() {
         if (waypointIndex <= waypoints.Count - 1) {
             var targetPosition = waypoints[waypointIndex].transform.position;
-            var movementThisFrame = waveConfig.GetMoveSpeed() * Time.deltaTime;
+            speed = waveConfig.GetMoveSpeed();
+            var movementThisFrame = speed * Time.deltaTime;
+
+            if (waypointIndex > 0) {
+                movementDirection = waypoints[waypointIndex].position - waypoints[waypointIndex - 1].position;
+            }
+
             transform.position = Vector3.MoveTowards
                 (transform.position, targetPosition, movementThisFrame);
 
@@ -36,4 +44,13 @@ public class EnemyPathing : MonoBehaviour {
             Destroy(gameObject);
         }
     }
+
+    public Vector3 GetMovementDirection() {
+        return movementDirection;
+    }
+
+    public float GetSpeed() {
+        return speed;
+    }
+
 }

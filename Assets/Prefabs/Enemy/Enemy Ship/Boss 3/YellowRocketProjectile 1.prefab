@@ -9452,6 +9452,7 @@ GameObject:
   - component: {fileID: 8286690}
   - component: {fileID: 8483824619340060764}
   - component: {fileID: 9181187144390423173}
+  - component: {fileID: -4381432428802101530}
   m_Layer: 12
   m_Name: YellowRocketProjectile 1
   m_TagString: Boss
@@ -14275,6 +14276,22 @@ CapsuleCollider:
   m_Height: 1.5
   m_Direction: 2
   m_Center: {x: 0, y: 0, z: 0.92}
+--- !u!54 &-4381432428802101530
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182038}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &182832
 GameObject:
   m_ObjectHideFlags: 0

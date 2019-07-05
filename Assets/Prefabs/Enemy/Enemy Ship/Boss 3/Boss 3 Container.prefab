@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa56b123a01f9e14e9fadc9a33059a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1250
+  health: 1650
   explosionPrefab: {fileID: 141060, guid: d82dc02ce1454d547abb75973937b38a, type: 3}
   delayBeforeDestroy: 0.1
   delayBeforeVFXDestroy: 5

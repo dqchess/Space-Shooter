@@ -19,4 +19,4 @@ MonoBehaviour:
   timeBetweenSpawns: 1.2
   numberOfEnemy: 6
   moveSpeed: 15
-  timeDelayAfterSpawn: 2
+  timeDelayAfterSpawn: 0

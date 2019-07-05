@@ -30,10 +30,6 @@ public class EnemySpawner : MonoBehaviour {
     [SerializeField] Text enemiesKilledText;
     [SerializeField] Text bossWarningText;
 
-    private const string Level1 = "Level 1";
-    private const string Level2 = "Level 2";
-    private const string Level3 = "Level 3";
-
     private int killsBeforeBossArrives;
     private int numberOfEnemiesKilled = 0;
     private Player player;
@@ -45,8 +41,6 @@ public class EnemySpawner : MonoBehaviour {
         player = FindObjectOfType<Player>();
 
         int difficulty = FindObjectOfType<GameSession>().GetDifficulty();
-        Debug.Log("Difficulty from EnemySpawnner: " + difficulty);
-        //Debug.Log("Difficulty: " + difficulty);
         if (difficulty == GameSession.Easy) {
             killsBeforeBossArrives = killsBeforeBossArrivesEasy;
         } else if (difficulty == GameSession.Normal) {
@@ -82,9 +76,7 @@ public class EnemySpawner : MonoBehaviour {
             int num = FindObjectsOfType<EnemyPathing>().Length; // Find number of enemies on the screen.
                                                                 // Debug.Log("Enemy Number on screen: " + num);
             if (num > (currentWave.GetNumberOfEnemy() / 2)) {
-                //Debug.Log("Enemy Number is greated than 4. So waiting....");
                 yield return new WaitForSeconds((num - currentWave.GetNumberOfEnemy() / 2) * 2f);
-                // Debug.Log("Waiting done! Now Spawning...");
             }
             yield return StartCoroutine(SpawnAllEnemiesInWave(currentWave));
         }

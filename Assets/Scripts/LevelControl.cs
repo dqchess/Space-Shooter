@@ -39,9 +39,11 @@ public class LevelControl : MonoBehaviour {
         int levelUnlocked = PlayerPrefs.GetInt("LevelsUnlocked", 1) + 1;
         Firebase.Analytics.FirebaseAnalytics.LogEvent(Firebase.Analytics.FirebaseAnalytics.EventLevelUp, new Firebase.Analytics.Parameter(Firebase.Analytics.FirebaseAnalytics.EventLevelUp, SceneManager.GetActiveScene().buildIndex));
         PlayerPrefs.SetInt("LevelsUnlocked", levelUnlocked);
-        
-        player.StopFire();
 
+        player.DisableJoystickInput();
+        player.StopFire();
+        player.SetPlayerSpeed(34);
+        
         // If last level, add score to leaderboard
         float score = FindObjectOfType<Score>().GetScore();
         PlayGames.AddScoreToLeaderBoard(GPGSIds.leaderboard_space_shooter__leaderboard, long.Parse(score.ToString()));
@@ -60,7 +62,6 @@ public class LevelControl : MonoBehaviour {
         yield return new WaitForSeconds(1.5f);
         // Show Go to next level menu
         nextLevelPanel.SetActive(true);
-        Debug.Log("Destroying Player");
         yield return new WaitForSeconds(3f);
         player.gameObject.SetActive(false);
     }
@@ -71,7 +72,7 @@ public class LevelControl : MonoBehaviour {
 
     private void Update() {
         if (canMove && exitGate != null && player != null) {
-            player.transform.position = Vector3.MoveTowards(player.transform.position, exitGate.transform.position, Time.deltaTime * player.GetPlayerSpeed() + 1);
+            player.transform.position = Vector3.MoveTowards(player.transform.position, exitGate.transform.position, player.GetPlayerSpeed() * Time.deltaTime);
         }
     }
 }

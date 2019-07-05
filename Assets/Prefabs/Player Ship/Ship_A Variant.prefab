@@ -223,14 +223,16 @@ PrefabInstance:
     - target: {fileID: 1579607993763895789, guid: c6d050076565c634698b19ef0af575f7,
         type: 3}
       propertyPath: movementSpeed
-      value: 350
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 1579607993763895789, guid: c6d050076565c634698b19ef0af575f7,
         type: 3}
       propertyPath: powerUpDelayBetweenFiring
       value: 0.4
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9544018, guid: c6d050076565c634698b19ef0af575f7, type: 3}
+    - {fileID: 501473120, guid: c6d050076565c634698b19ef0af575f7, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: c6d050076565c634698b19ef0af575f7, type: 3}
 --- !u!1 &3720834416071385343 stripped
 GameObject:

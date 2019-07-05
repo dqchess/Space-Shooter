@@ -4894,7 +4894,7 @@ MonoBehaviour:
   damageMedium: 2
   hardProjectileSpeed: 60
   damageHard: 1
-  playerMissileDamage: 50
+  playerMissileDamage: 25
 --- !u!136 &8917006804318954749
 CapsuleCollider:
   m_ObjectHideFlags: 0

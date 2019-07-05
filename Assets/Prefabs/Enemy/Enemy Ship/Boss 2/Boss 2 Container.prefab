@@ -404,7 +404,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa56b123a01f9e14e9fadc9a33059a10, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 1050
+  health: 1450
   explosionPrefab: {fileID: 141060, guid: fba3c9ddbd87b0844816236ae8cf6cbc, type: 3}
   delayBeforeDestroy: 0.1
   delayBeforeVFXDestroy: 5
